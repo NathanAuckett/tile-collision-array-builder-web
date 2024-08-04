@@ -9,11 +9,7 @@ window.addEventListener("load", function () {
     const gridY = 32;
     const gridX2 = canvas.width - 32;
     const gridY2 = canvas.height - 32;
-    const gridW = gridX2 - gridX;
-    const gridH = gridY2 - gridY;
-    const gridCellW = gridW / gridCellCountW;
-    const gridCellH = gridH / gridCellCountH;
     // Draw grid
-    const grid = new Grid(canvas, gridX, gridY, gridX2, gridY2, gridCellW, gridCellH);
+    const grid = new Grid(canvas, gridX, gridY, gridX2, gridY2, gridCellCountW, gridCellCountH);
     grid.draw();
 });
