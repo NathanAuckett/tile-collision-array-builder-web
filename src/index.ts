@@ -1,5 +1,8 @@
 import Grid from "./Grid.js";
-import drawArraysOnGrid from "./drawArraysOnGrid.js";
+import GridArrayController from "./GridArrayController.js";
+import drawArraysOnGrid from "./GridArrayController.js";
+
+const fileSelect = document.getElementById("fileSelect");
 
 function main(){
     const canvas = document.getElementById("grid") as HTMLCanvasElement;
@@ -9,15 +12,30 @@ function main(){
     
     const grid = new Grid(canvas, 32, 32, canvas.width - 32, canvas.height - 32, 16, 16);
     
+    let selectedImage;
 
     const heightArray = new Array(grid.cellCountX).fill(0);
     const widthArray = new Array(grid.cellCountY).fill(0);
 
+    const gridArrayController = new GridArrayController(canvas, grid, heightArray, widthArray);
+
     //Draw initial grid
     grid.draw();
+
+    fileSelect.addEventListener("change", (e) => {
+        console.log(e);
+        const target = e.target as HTMLInputElement;
+        const src = URL.createObjectURL(target.files[0]);
+        console.log(src);
     
-    //Handle continuous drawing to grid
-    drawArraysOnGrid(canvas, grid, heightArray, widthArray);
+        selectedImage = new Image();
+        selectedImage.onload = () => {
+            console.log(selectedImage);
+            gridArrayController.backgroundImage = selectedImage;
+            gridArrayController.drawAll();
+        }
+        selectedImage.src = src;
+    });
 }
 
 window.addEventListener("load", function(){
