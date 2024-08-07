@@ -1,4 +1,5 @@
 import Grid from "./Grid.js";
+import TileSet from "./TileSet.js";
 
 export default class GridArrayController {
     mousePressed = false;
@@ -7,9 +8,10 @@ export default class GridArrayController {
     canvas: HTMLCanvasElement;
     ctx: CanvasRenderingContext2D;
     grid: Grid;
+    tileSet: TileSet;
     heightArray: number[] = [];
     widthArray: number[] = [];
-    backgroundImage
+    fillColour = "rgba(255, 255, 255, 0.25)";
 
     constructor (canvas: HTMLCanvasElement, grid: Grid, heightArray: number[], widthArray: number[]){
         this.canvas = canvas;
@@ -76,19 +78,26 @@ export default class GridArrayController {
 
     //Draws everything to the grid
     drawAll(){
-        //Draw updated frame
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        //Clear frame
+        this.ctx.fillStyle = "black";
+        this.ctx.fillRect(
+            0,
+            0,
+            this.canvas.width,
+            this.canvas.height
+        );
         
-        //Draw background
-        if (this.backgroundImage){
-            this.ctx.drawImage(this.backgroundImage, this.grid.x1, this.grid.y1, this.grid.width, this.grid.height);
+        //Draw tile
+        if (this.tileSet){
+            this.tileSet.drawTileToCanvas(this.canvas, this.grid, 1);
         }
 
         //Draw arrays
-        this.ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
         //Height array
+        
         for (let i = 0; i < this.grid.cellCountX; i ++){
             if (this.heightArray[i] > 0){
+                this.ctx.fillStyle = this.fillColour;
                 this.ctx.fillRect(
                     this.grid.x1 + this.grid.cellWidth * i,
                     this.grid.y2 - this.grid.cellHeight * this.heightArray[i],
@@ -96,12 +105,13 @@ export default class GridArrayController {
                     this.grid.cellHeight * this.heightArray[i]
                 );
             }
-
+            this.ctx.fillStyle = "white";
             this.ctx.fillText(this.heightArray[i] as unknown as string, this.grid.x1 + this.grid.cellWidth * i + this.grid.cellWidth / 2, this.grid.y2 + 20);
         }
         //Width array
         for (var i = 0; i < this.grid.cellCountY; i ++){
             if (this.widthArray[i] > 0){
+                this.ctx.fillStyle = this.fillColour;
                 this.ctx.fillRect(
                     this.grid.x2 - this.grid.cellWidth * this.widthArray[i],
                     this.grid.y1 + this.grid.cellHeight * i,
@@ -109,12 +119,10 @@ export default class GridArrayController {
                     this.grid.cellHeight
                 );
             }
-
+            this.ctx.fillStyle = "white";
             this.ctx.fillText(this.widthArray[i] as unknown as string, this.grid.x2 + 10, this.grid.y1 + this.grid.cellHeight * i + this.grid.cellHeight / 2);
         }
 
         this.grid.draw();
     }
-
-    
 }

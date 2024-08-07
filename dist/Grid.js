@@ -44,6 +44,7 @@ export default class Grid {
         return result;
     }
     draw() {
+        this.ctx.strokeStyle = "white";
         this.ctx.beginPath();
         let xx = this.x1;
         let yy = this.y1;

@@ -55,6 +55,8 @@ export default class Grid {
     }
 
     draw() {
+        this.ctx.strokeStyle = "white";
+        
         this.ctx.beginPath();
         let xx = this.x1;
         let yy = this.y1;

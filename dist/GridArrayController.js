@@ -5,9 +5,10 @@ export default class GridArrayController {
     canvas;
     ctx;
     grid;
+    tileSet;
     heightArray = [];
     widthArray = [];
-    backgroundImage;
+    fillColour = "rgba(255, 255, 255, 0.25)";
     constructor(canvas, grid, heightArray, widthArray) {
         this.canvas = canvas;
         this.grid = grid;
@@ -67,26 +68,30 @@ export default class GridArrayController {
     }
     //Draws everything to the grid
     drawAll() {
-        //Draw updated frame
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        //Draw background
-        if (this.backgroundImage) {
-            this.ctx.drawImage(this.backgroundImage, this.grid.x1, this.grid.y1, this.grid.width, this.grid.height);
+        //Clear frame
+        this.ctx.fillStyle = "black";
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        //Draw tile
+        if (this.tileSet) {
+            this.tileSet.drawTileToCanvas(this.canvas, this.grid, 1);
         }
         //Draw arrays
-        this.ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
         //Height array
         for (let i = 0; i < this.grid.cellCountX; i++) {
             if (this.heightArray[i] > 0) {
+                this.ctx.fillStyle = this.fillColour;
                 this.ctx.fillRect(this.grid.x1 + this.grid.cellWidth * i, this.grid.y2 - this.grid.cellHeight * this.heightArray[i], this.grid.cellWidth, this.grid.cellHeight * this.heightArray[i]);
             }
+            this.ctx.fillStyle = "white";
             this.ctx.fillText(this.heightArray[i], this.grid.x1 + this.grid.cellWidth * i + this.grid.cellWidth / 2, this.grid.y2 + 20);
         }
         //Width array
         for (var i = 0; i < this.grid.cellCountY; i++) {
             if (this.widthArray[i] > 0) {
+                this.ctx.fillStyle = this.fillColour;
                 this.ctx.fillRect(this.grid.x2 - this.grid.cellWidth * this.widthArray[i], this.grid.y1 + this.grid.cellHeight * i, this.grid.cellWidth * this.widthArray[i], this.grid.cellHeight);
             }
+            this.ctx.fillStyle = "white";
             this.ctx.fillText(this.widthArray[i], this.grid.x2 + 10, this.grid.y1 + this.grid.cellHeight * i + this.grid.cellHeight / 2);
         }
         this.grid.draw();
