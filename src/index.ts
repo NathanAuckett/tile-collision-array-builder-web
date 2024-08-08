@@ -3,36 +3,52 @@ import GridArrayController from "./GridArrayController.js";
 import TileSet from "./TileSet.js";
 
 const fileSelect = document.getElementById("fileSelect");
+const tileIndexInput = document.getElementById("tileIndex") as HTMLInputElement;
+tileIndexInput.value = "0";
 
 function main(){
     const canvas = document.getElementById("grid") as HTMLCanvasElement;
-    const ctx = canvas.getContext("2d");
     canvas.width = 600;
     canvas.height = 600;
-    let selectedImage;
+    let selectedImage: HTMLImageElement;
     
-    const grid = new Grid(canvas, 32, 32, canvas.width - 32, canvas.height - 32, 16, 16);
+    const grid = new Grid(canvas, 32, 32, canvas.width - 32, canvas.height - 32, 64, 64);
     const heightArray = new Array(grid.cellCountX).fill(0);
     const widthArray = new Array(grid.cellCountY).fill(0);
     const gridArrayController = new GridArrayController(canvas, grid, heightArray, widthArray);
+    let tileSet: TileSet;
 
     //Draw initial grid
     gridArrayController.drawAll();
 
     fileSelect.addEventListener("change", (e) => {
-        console.log(e);
         const target = e.target as HTMLInputElement;
         const src = URL.createObjectURL(target.files[0]);
-        console.log(src);
     
         selectedImage = new Image();
         selectedImage.onload = () => {
-            console.log(selectedImage);
-            const tileSet = new TileSet(selectedImage, 64, 64);
+            tileSet = new TileSet(selectedImage, 64, 64);
             gridArrayController.tileSet = tileSet;
             gridArrayController.drawAll();
         }
         selectedImage.src = src;
+
+        document.getElementById("tileIndexSpan").style.display = "initial";
+    });
+
+    //Handle tile index change
+    tileIndexInput.addEventListener("change", (e) => {
+        if (tileSet){
+            const target = e.target as HTMLInputElement;
+            let value = parseInt(target.value);
+            if (value > tileSet.tileCount - 1){
+                value = tileSet.tileCount - 1;
+                target.value = value.toString();
+            }
+            gridArrayController.tileIndex = value;
+            gridArrayController.drawAll();
+            console.log(value);
+        }
     });
 }
 

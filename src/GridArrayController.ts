@@ -11,7 +11,8 @@ export default class GridArrayController {
     tileSet: TileSet;
     heightArray: number[] = [];
     widthArray: number[] = [];
-    fillColour = "rgba(255, 255, 255, 0.25)";
+    fillColour = "rgba(255, 255, 255, 0.3)";
+    tileIndex = 0;
 
     constructor (canvas: HTMLCanvasElement, grid: Grid, heightArray: number[], widthArray: number[]){
         this.canvas = canvas;
@@ -23,8 +24,9 @@ export default class GridArrayController {
         window.addEventListener("mousedown", (e) => {
             if (e.button == 0){
                 this.mousePressed = true;
-                this.handleClick(e); //Draw on initial click
-                this.drawAll();
+                if (this.handleClick(e)){ //Draw on initial click
+                    this.drawAll();
+                }
             }
         });
         
@@ -37,8 +39,9 @@ export default class GridArrayController {
         //Continue drawing if mouse is held and dragged
         window.addEventListener("mousemove", (e) => {
             if (this.mousePressed){
-                this.handleClick(e);
-                this.drawAll();
+                if (this.handleClick(e)){
+                    this.drawAll();
+                }
             }
         });
     }
@@ -83,7 +86,11 @@ export default class GridArrayController {
                     }
                 }
             }
+
+            return true;
         }
+
+        return false;
     }
 
     //Draws everything to the grid
@@ -99,12 +106,11 @@ export default class GridArrayController {
         
         //Draw tile
         if (this.tileSet){
-            this.tileSet.drawTileToCanvas(this.canvas, this.grid, 1);
+            this.tileSet.drawTileToCanvas(this.canvas, this.grid, this.tileIndex);
         }
 
         //Draw arrays
         //Height array
-        
         for (let i = 0; i < this.grid.cellCountX; i ++){
             if (this.heightArray[i] > 0){
                 this.ctx.fillStyle = this.fillColour;

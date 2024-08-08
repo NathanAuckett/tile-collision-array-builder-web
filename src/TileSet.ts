@@ -6,6 +6,7 @@ export default class TileSet {
     tileWidth: number;
     tileHeight: number;
     tiles: Tile[] = [];
+    tileCount: number;
     
     constructor (image: HTMLImageElement, tileWidth: number, tileHeight: number){
         this.image = image;
@@ -32,6 +33,8 @@ export default class TileSet {
                 );
             }
         }
+
+        this.tileCount = this.tiles.length;
 
         console.log(this.tiles);
     }

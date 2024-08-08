@@ -4,6 +4,7 @@ export default class TileSet {
     tileWidth;
     tileHeight;
     tiles = [];
+    tileCount;
     constructor(image, tileWidth, tileHeight) {
         this.image = image;
         this.tileWidth = tileWidth;
@@ -18,6 +19,7 @@ export default class TileSet {
                 this.tiles.push(new Tile(this.image, this.tileWidth * x, this.tileHeight * y, this.tileWidth, this.tileHeight));
             }
         }
+        this.tileCount = this.tiles.length;
         console.log(this.tiles);
     }
     drawTileToCanvas(canvas, grid, tileIndex) {
