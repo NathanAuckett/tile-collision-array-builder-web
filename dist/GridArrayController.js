@@ -36,32 +36,39 @@ export default class GridArrayController {
         });
     }
     handleClick(mouseEvent) {
+        const mouseX = mouseEvent.clientX;
+        const mouseY = mouseEvent.clientY;
         const rect = this.canvas.getBoundingClientRect();
-        this.mouseGridIndexX = this.grid.cellXIndexFromCanvasX(mouseEvent.clientX - rect.x);
-        this.mouseGridIndexY = this.grid.cellYIndexFromCanvasY(mouseEvent.clientY - rect.y);
-        //Height array
-        for (var i = 0; i < this.grid.cellCountX; i++) {
-            if (i < this.mouseGridIndexX) {
-                if (this.heightArray[i] > this.grid.cellCountX - this.mouseGridIndexY) {
-                    this.heightArray[i] = this.grid.cellCountX - this.mouseGridIndexY;
+        if (mouseX >= rect.x &&
+            mouseY >= rect.y &&
+            mouseX <= rect.x + rect.width &&
+            mouseY <= rect.y + rect.height) {
+            this.mouseGridIndexX = this.grid.cellXIndexFromCanvasX(mouseEvent.clientX - rect.x);
+            this.mouseGridIndexY = this.grid.cellYIndexFromCanvasY(mouseEvent.clientY - rect.y);
+            //Height array
+            for (var i = 0; i < this.grid.cellCountX; i++) {
+                if (i < this.mouseGridIndexX) {
+                    if (this.heightArray[i] > this.grid.cellCountX - this.mouseGridIndexY) {
+                        this.heightArray[i] = this.grid.cellCountX - this.mouseGridIndexY;
+                    }
+                }
+                else {
+                    if (this.heightArray[i] < this.grid.cellCountX - this.mouseGridIndexY) {
+                        this.heightArray[i] = this.grid.cellCountX - this.mouseGridIndexY;
+                    }
                 }
             }
-            else {
-                if (this.heightArray[i] < this.grid.cellCountX - this.mouseGridIndexY) {
-                    this.heightArray[i] = this.grid.cellCountX - this.mouseGridIndexY;
+            //widthArray
+            for (var i = 0; i < this.grid.cellCountY; i++) {
+                if (i < this.mouseGridIndexY) {
+                    if (this.widthArray[i] > this.grid.cellCountY - this.mouseGridIndexX) {
+                        this.widthArray[i] = this.grid.cellCountY - this.mouseGridIndexX;
+                    }
                 }
-            }
-        }
-        //widthArray
-        for (var i = 0; i < this.grid.cellCountY; i++) {
-            if (i < this.mouseGridIndexY) {
-                if (this.widthArray[i] > this.grid.cellCountY - this.mouseGridIndexX) {
-                    this.widthArray[i] = this.grid.cellCountY - this.mouseGridIndexX;
-                }
-            }
-            else {
-                if (this.widthArray[i] < this.grid.cellCountY - this.mouseGridIndexX) {
-                    this.widthArray[i] = this.grid.cellCountY - this.mouseGridIndexX;
+                else {
+                    if (this.widthArray[i] < this.grid.cellCountY - this.mouseGridIndexX) {
+                        this.widthArray[i] = this.grid.cellCountY - this.mouseGridIndexX;
+                    }
                 }
             }
         }
