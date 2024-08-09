@@ -7,21 +7,22 @@ export default class TileSet {
     tileHeight: number;
     tiles: Tile[] = [];
     tileCount: number;
+    tileCountX: number;
+    tileCountY: number;
     
     constructor (image: HTMLImageElement, tileWidth: number, tileHeight: number){
         this.image = image;
         this.tileWidth = tileWidth;
         this.tileHeight = tileHeight;
+        this.tileCountX = this.image.width / this.tileWidth;
+        this.tileCountY = this.image.height / this.tileHeight;
 
         this.generateTiles();
     }
 
     generateTiles(){
-        const tileCountX = this.image.width / this.tileWidth;
-        const tileCountY = this.image.height / this.tileHeight;
-
-        for (let y = 0; y < tileCountY; y ++){
-            for (let x = 0; x < tileCountX; x ++){
+        for (let y = 0; y < this.tileCountY; y ++){
+            for (let x = 0; x < this.tileCountX; x ++){
                 this.tiles.push(
                     new Tile(
                         this.image,
@@ -35,8 +36,7 @@ export default class TileSet {
         }
 
         this.tileCount = this.tiles.length;
-
-        console.log(this.tiles);
+        console.log("Tile count", this.tileCount);
     }
 
     drawTileToCanvas(canvas: HTMLCanvasElement, grid: Grid, tileIndex: number){
@@ -54,6 +54,19 @@ export default class TileSet {
             grid.y1,
             grid.width,
             grid.height
+        );
+    }
+
+    drawTileSetToCanvas(canvas: HTMLCanvasElement, x, y, width = this.image.width, height = this.image.height){
+        const ctx = canvas.getContext("2d");
+        ctx.imageSmoothingEnabled = false;
+
+        ctx.drawImage(
+            this.image,
+            x,
+            y,
+            width,
+            height
         );
     }
 }

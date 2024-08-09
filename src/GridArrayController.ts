@@ -21,76 +21,61 @@ export default class GridArrayController {
         this.widthArray = widthArray;
         this.ctx = canvas.getContext("2d");
 
-        window.addEventListener("mousedown", (e) => {
+        this.canvas.addEventListener("mousedown", (e) => {
             if (e.button == 0){
                 this.mousePressed = true;
-                if (this.handleClick(e)){ //Draw on initial click
-                    this.drawAll();
-                }
+                this.handleClick(e);
+                this.drawAll();
             }
         });
         
-        window.addEventListener("mouseup", (e) => {
+        window.addEventListener("mouseup", (e) => { //this one uses window so if you click and drag out of the canvas it will still stop drawing
             if (e.button == 0){
                 this.mousePressed = false;
             }
         });
     
         //Continue drawing if mouse is held and dragged
-        window.addEventListener("mousemove", (e) => {
+        this.canvas.addEventListener("mousemove", (e) => {
             if (this.mousePressed){
-                if (this.handleClick(e)){
-                    this.drawAll();
-                }
+                this.handleClick(e);
+                this.drawAll();
             }
         });
     }
     
     handleClick(mouseEvent: MouseEvent){
-        const mouseX = mouseEvent.clientX;
-        const mouseY = mouseEvent.clientY;
         const rect = this.canvas.getBoundingClientRect();
-
-        if (
-            mouseX >= rect.x &&
-            mouseY >= rect.y &&
-            mouseX <= rect.x + rect.width &&
-            mouseY <= rect.y + rect.height
-        ){
-            this.mouseGridIndexX = this.grid.cellXIndexFromCanvasX(mouseEvent.clientX - rect.x);
-            this.mouseGridIndexY = this.grid.cellYIndexFromCanvasY(mouseEvent.clientY - rect.y);
-            
-            //Height array
-            for (var i = 0; i < this.grid.cellCountX; i ++){
-                if (i < this.mouseGridIndexX){
-                    if (this.heightArray[i] > this.grid.cellCountX - this.mouseGridIndexY){
-                        this.heightArray[i] = this.grid.cellCountX - this.mouseGridIndexY;
-                    }
-                }
-                else{
-                    if (this.heightArray[i] < this.grid.cellCountX - this.mouseGridIndexY){
-                        this.heightArray[i] = this.grid.cellCountX - this.mouseGridIndexY;
-                    }
+        
+        this.mouseGridIndexX = this.grid.cellXIndexFromCanvasX(mouseEvent.clientX - rect.x);
+        this.mouseGridIndexY = this.grid.cellYIndexFromCanvasY(mouseEvent.clientY - rect.y);
+        
+        //Height array
+        for (var i = 0; i < this.grid.cellCountX; i ++){
+            if (i < this.mouseGridIndexX){
+                if (this.heightArray[i] > this.grid.cellCountX - this.mouseGridIndexY){
+                    this.heightArray[i] = this.grid.cellCountX - this.mouseGridIndexY;
                 }
             }
-            //widthArray
-            for (var i = 0; i < this.grid.cellCountY; i ++){
-                if (i < this.mouseGridIndexY){
-                    if (this.widthArray[i] > this.grid.cellCountY - this.mouseGridIndexX){
-                        this.widthArray[i] = this.grid.cellCountY - this.mouseGridIndexX;
-                    }
-                }
-                else{
-                    if (this.widthArray[i] < this.grid.cellCountY - this.mouseGridIndexX){
-                        this.widthArray[i] = this.grid.cellCountY - this.mouseGridIndexX;
-                    }
+            else{
+                if (this.heightArray[i] < this.grid.cellCountX - this.mouseGridIndexY){
+                    this.heightArray[i] = this.grid.cellCountX - this.mouseGridIndexY;
                 }
             }
-
-            return true;
         }
-
-        return false;
+        //widthArray
+        for (var i = 0; i < this.grid.cellCountY; i ++){
+            if (i < this.mouseGridIndexY){
+                if (this.widthArray[i] > this.grid.cellCountY - this.mouseGridIndexX){
+                    this.widthArray[i] = this.grid.cellCountY - this.mouseGridIndexX;
+                }
+            }
+            else{
+                if (this.widthArray[i] < this.grid.cellCountY - this.mouseGridIndexX){
+                    this.widthArray[i] = this.grid.cellCountY - this.mouseGridIndexX;
+                }
+            }
+        }
     }
 
     //Draws everything to the grid
