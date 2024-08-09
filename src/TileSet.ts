@@ -14,8 +14,8 @@ export default class TileSet {
         this.image = image;
         this.tileWidth = tileWidth;
         this.tileHeight = tileHeight;
-        this.tileCountX = this.image.width / this.tileWidth;
-        this.tileCountY = this.image.height / this.tileHeight;
+        this.tileCountX = Math.floor(this.image.width / this.tileWidth);
+        this.tileCountY = Math.floor(this.image.height / this.tileHeight);
 
         this.generateTiles();
     }
