@@ -5,6 +5,7 @@ import TileSet from "./TileSet.js";
 const fileSelect = document.getElementById("fileSelect");
 const tileIndexInput = document.getElementById("tileIndex");
 tileIndexInput.value = "0";
+const output = document.getElementById("output");
 function main() {
     const gridCanvas = document.getElementById("gridCanvas");
     gridCanvas.width = 600;
@@ -16,7 +17,7 @@ function main() {
     const grid = new Grid(gridCanvas, 32, 32, gridCanvas.width - 32, gridCanvas.height - 32, 64, 64);
     const heightArray = new Array(grid.cellCountX).fill(0);
     const widthArray = new Array(grid.cellCountY).fill(0);
-    const gridArrayController = new GridArrayController(gridCanvas, grid, heightArray, widthArray);
+    const gridArrayController = new GridArrayController(gridCanvas, grid, heightArray, widthArray, output);
     let tileSelectCanvasController;
     let tileSet;
     //Draw initial grid

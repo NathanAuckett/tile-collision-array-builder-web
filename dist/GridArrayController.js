@@ -8,10 +8,12 @@ export default class GridArrayController {
     tileSet;
     heightArray = [];
     widthArray = [];
+    outputElement;
     fillColour = "rgba(255, 255, 255, 0.3)";
     tileIndex = 0;
-    constructor(canvas, grid, heightArray, widthArray) {
+    constructor(canvas, grid, heightArray, widthArray, outputElement) {
         this.canvas = canvas;
+        this.outputElement = outputElement;
         this.grid = grid;
         this.heightArray = heightArray;
         this.widthArray = widthArray;
@@ -26,6 +28,7 @@ export default class GridArrayController {
         window.addEventListener("mouseup", (e) => {
             if (e.button == 0) {
                 this.mousePressed = false;
+                this.updateOutput(this.getJSON());
             }
         });
         //Continue drawing if mouse is held and dragged
@@ -96,5 +99,16 @@ export default class GridArrayController {
             this.ctx.fillText(this.widthArray[i], this.grid.x2 + 10, this.grid.y1 + this.grid.cellHeight * i + this.grid.cellHeight / 2);
         }
         this.grid.draw();
+    }
+    getJSON() {
+        return JSON.stringify({
+            arrayWidth: this.grid.cellCountX,
+            arrayHeight: this.grid.cellCountY,
+            widthArray: this.widthArray,
+            heightArray: this.heightArray
+        }, null, "\t");
+    }
+    updateOutput(str) {
+        this.outputElement.value = str;
     }
 }
