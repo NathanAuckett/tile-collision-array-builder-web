@@ -42,7 +42,11 @@ function main(){
         }
         selectedImage.src = src;
         
-        document.getElementById("hiddenUIContainer").style.display = "initial";
+        //Unhide hidden elements
+        const unhide = document.querySelectorAll(".onlyWhenFile");
+        for (const element of unhide){
+            element.classList.remove("onlyWhenFile");
+        }
     });
 
     //Handle tile index change

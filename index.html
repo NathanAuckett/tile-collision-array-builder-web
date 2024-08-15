@@ -5,28 +5,54 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tile Collision Array Builder</title>
 
+    <link rel="stylesheet" href="./bootstrap/bootstrap.css">
     <link rel="stylesheet" href="./index.css">
 </head>
-    <h1>Tile Collision Array Builder</h1>
+    <div class="container" style="height: 100vh;">
+        <div class="row text-center pb-5" style>
+            <h1>Tile Collision Array Builder</h1>
+        </div>
 
-    <input type="file" id="fileSelect" accept="image/png, image/jpeg">
+        <div class="row">
 
-    <br>
+            <div class="row">
+                <div class="col">
+                    <div class="row">
+                        <h4>Select Tile:</h4>
+                    </div>
+                    <div class="row pb-2">
+                        <input type="file" id="fileSelect" accept="image/png, image/jpeg">
+                    </div>
+                    <div class="row onlyWhenFile">
+                        <div>
+                            <canvas id="tileSelectCanvas"></canvas>
+                        </div>
+                    </div>
+                    <div class="row onlyWhenFile">
+                        <div>
+                            <label for="tileIndex">Tile Index:</label>
+                            <input type="number" id="tileIndex" min="0" style="width: 100px;"/>
+                        </div>
+                    </div>
+                </div>
 
-    <div id="hiddenUIContainer" style="display: none;">
-        <h4>Select Tile:</h4>
-        <canvas id="tileSelectCanvas"></canvas>
-        <br>
-        <label for="tileIndex">Tile Index:</label>
-            <input type="number" id="tileIndex" min="0" style="width: 50px;"/>
-        <br>
-        <h4>Draw collision shape:</h4>
-        <canvas id="gridCanvas"></canvas>
-        <br>
-        <h4>Output:</h4>
-        <textarea id="output" rows="30" cols="80"></textarea>
+                <div class="col onlyWhenFile">
+                    <h4>Draw collision shape:</h4>
+                    <div>
+                        <canvas id="gridCanvas"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row onlyWhenFile flex-grow-1">
+                <h4>Output:</h4>
+                <textarea id="output"></textarea>
+            </div>
+
+        </div>
     </div>
 
+    <script src="./bootstrap/bootstrap.bundle.js"></script>
     <script type="module" src="./dist/index.js"></script>
 </body>
 </html>

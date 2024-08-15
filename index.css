@@ -1,3 +1,7 @@
 canvas {
     border: black solid 2px;
 }
+
+.onlyWhenFile {
+    display: none;
+}
