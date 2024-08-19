@@ -4,14 +4,14 @@ import TileSelectCanvasController from "./TileSelectCanvasController.js";
 import TileSet from "./TileSet.js";
 
 const fileSelect = document.getElementById("fileSelect");
-const tileIndexInput = document.getElementById("tileIndex") as HTMLInputElement;
-tileIndexInput.value = "0";
+const inputTileIndex = document.getElementById("tileIndex") as HTMLInputElement;
+const inputGridCellCountH = document.getElementById("horizontalCells") as HTMLInputElement;
 const output = document.getElementById("output") as HTMLTextAreaElement;
 
 function main(){
     const gridCanvas = document.getElementById("gridCanvas") as HTMLCanvasElement;
-    gridCanvas.width = 600;
-    gridCanvas.height = 600;
+    gridCanvas.width = 700;
+    gridCanvas.height = 700;
     const tileSelectCanvas = document.getElementById("tileSelectCanvas") as HTMLCanvasElement;
     tileSelectCanvas.width = 400;
     tileSelectCanvas.height = 200;
@@ -20,7 +20,8 @@ function main(){
     const grid = new Grid(gridCanvas, 32, 32, gridCanvas.width - 32, gridCanvas.height - 32, 64, 64);
     const heightArray = new Array(grid.cellCountX).fill(0);
     const widthArray = new Array(grid.cellCountY).fill(0);
-    const gridArrayController = new GridArrayController(gridCanvas, grid, heightArray, widthArray, output);
+    const angleArray = new Array(grid.cellCountX).fill(0);
+    const gridArrayController = new GridArrayController(gridCanvas, grid, heightArray, widthArray, angleArray, output);
     let tileSelectCanvasController: TileSelectCanvasController;
     let tileSet: TileSet;
 
@@ -34,11 +35,11 @@ function main(){
         selectedImage = new Image();
         selectedImage.onload = () => {
             tileSet = new TileSet(selectedImage, 64, 64);
-            tileSelectCanvasController = new TileSelectCanvasController(tileSelectCanvas, tileSet, tileIndexInput);
+            tileSelectCanvasController = new TileSelectCanvasController(tileSelectCanvas, tileSet, inputTileIndex);
             gridArrayController.tileSet = tileSet;
             gridArrayController.drawAll();
             tileSet.drawTileSetToCanvas(tileSelectCanvas, 0, 0);
-            tileIndexInput.max = (tileSet.tileCount - 1).toString();
+            inputTileIndex.max = (tileSet.tileCount - 1).toString();
         }
         selectedImage.src = src;
         
@@ -50,7 +51,7 @@ function main(){
     });
 
     //Handle tile index change
-    tileIndexInput.addEventListener("change", (e) => {
+    inputTileIndex.addEventListener("change", (e) => {
         if (tileSet){
             const target = e.target as HTMLInputElement;
             let value = parseInt(target.value);
@@ -66,6 +67,20 @@ function main(){
             gridArrayController.drawAll();
         }
     });
+
+    //Handle grid Cell count changes - not working yet
+    // inputGridCellCountH.addEventListener("change", (e) => {
+    //     const target = e.target as HTMLInputElement;
+    //     let value = parseInt(target.value);
+    //     if (value < 1){
+    //         value = 1;
+    //         target.value = value.toString();
+    //     }
+    //     grid.setCellCountX(value);
+    //     widthArray = new Array(grid.cellCountY).fill(0);
+    //     gridArrayController.widthArray = widthArray;
+    //     gridArrayController.drawAll();
+    // });
 }
 
 window.addEventListener("load", function(){

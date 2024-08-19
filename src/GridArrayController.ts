@@ -9,18 +9,20 @@ export default class GridArrayController {
     ctx: CanvasRenderingContext2D;
     grid: Grid;
     tileSet: TileSet;
-    heightArray: number[] = [];
-    widthArray: number[] = [];
+    heightArray: number[];
+    widthArray: number[];
+    angleArray: number[];
     outputElement: HTMLInputElement|HTMLTextAreaElement;
     fillColour = "rgba(255, 255, 255, 0.3)";
     tileIndex = 0;
 
-    constructor (canvas: HTMLCanvasElement, grid: Grid, heightArray: number[], widthArray: number[], outputElement: HTMLInputElement|HTMLTextAreaElement){
+    constructor (canvas: HTMLCanvasElement, grid: Grid, heightArray: number[], widthArray: number[], angleArray: number[], outputElement: HTMLInputElement|HTMLTextAreaElement){
         this.canvas = canvas;
         this.outputElement = outputElement;
         this.grid = grid;
         this.heightArray = heightArray;
         this.widthArray = widthArray;
+        this.angleArray = angleArray;
         this.ctx = canvas.getContext("2d");
 
         this.canvas.addEventListener("mousedown", (e) => {
@@ -109,8 +111,8 @@ export default class GridArrayController {
                     this.grid.cellHeight * this.heightArray[i]
                 );
             }
-            this.ctx.fillStyle = "white";
-            this.ctx.fillText(this.heightArray[i] as unknown as string, this.grid.x1 + this.grid.cellWidth * i + this.grid.cellWidth / 2, this.grid.y2 + 20);
+            //this.ctx.fillStyle = "white";
+            //this.ctx.fillText(this.heightArray[i] as unknown as string, this.grid.x1 + this.grid.cellWidth * i + this.grid.cellWidth / 2, this.grid.y2 + 20);
         }
         //Width array
         for (var i = 0; i < this.grid.cellCountY; i ++){
@@ -123,8 +125,8 @@ export default class GridArrayController {
                     this.grid.cellHeight
                 );
             }
-            this.ctx.fillStyle = "white";
-            this.ctx.fillText(this.widthArray[i] as unknown as string, this.grid.x2 + 10, this.grid.y1 + this.grid.cellHeight * i + this.grid.cellHeight / 2);
+            //this.ctx.fillStyle = "white";
+            //this.ctx.fillText(this.widthArray[i] as unknown as string, this.grid.x2 + 10, this.grid.y1 + this.grid.cellHeight * i + this.grid.cellHeight / 2);
         }
 
         this.grid.draw();

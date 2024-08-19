@@ -27,6 +27,16 @@ export default class Grid {
         this.cellWidth = this.width / this.cellCountX;
         this.cellHeight = this.height / this.cellCountY;
     }
+
+    setCellCountX(_count){
+        this.cellCountX = _count;
+        this.cellWidth = this.width / this.cellCountX;
+    }
+    
+    setCellCountY(_count){
+        this.cellCountY = _count;
+        this.cellHeight = this.height / this.cellCountY;
+    }
     
     cellXIndexFromCanvasX(_x){
         let result = Math.floor((_x - this.x1) / this.cellWidth);
