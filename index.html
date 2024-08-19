@@ -30,13 +30,25 @@
                     </div>
                     <div class="row onlyWhenFile">
                         <div>
-                            <label for="tileIndex">Tile Index:</label>
-                            <input type="number" id="tileIndex" min="0" style="width: 100px;"/>
+                            <input type="number" id="tileIndex" min="0" style="width: 60px;"/>
+                            <label for="tileIndex">Tile Index</label>
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <h4>Grid Settings:</h4>
+                        <div>
+                            <input type="number" id="horizontalCells" min="0" style="width: 60px;" value="64"/>
+                            <label for="horizontalCells">Horizontal Cells</label>
+                            
+                        </div>
+                        <div>
+                            <input type="number" id="horizontalCells" min="0" style="width: 60px;" value="64"/>
+                            <label for="horizontalCells">Vertical Cells</label>
                         </div>
                     </div>
                 </div>
 
-                <div class="col onlyWhenFile">
+                <div class="col mt-xl-4 mt-xxl-0 onlyWhenFile">
                     <h4>Draw collision shape:</h4>
                     <div>
                         <canvas id="gridCanvas"></canvas>
