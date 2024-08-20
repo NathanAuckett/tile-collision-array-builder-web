@@ -81,6 +81,39 @@ export default class GridArrayController {
                 }
             }
         }
+        //calculate angles
+        for (var i = 0; i < this.grid.cellCountX - 1; i ++){
+            let a = this.calcAngle(
+                this.widthArray[i] * this.grid.cellWidth,
+                this.heightArray[i] * this.grid.cellHeight,
+                this.widthArray[i + 1] * this.grid.cellWidth,
+                this.heightArray[i + 1] * this.grid.cellHeight
+            );
+            //Correct for GameMaker directions
+            // a -= 90;
+            // if (a < 0){
+            //     a += 360;
+            // }
+            this.angleArray[i] = a;
+        }
+        console.log(this.angleArray);
+    }
+
+    calcAngle(x1, y1, x2, y2, returnDegrees = true){
+        //subtract vectors to get direction vector
+        const dirX = x2 - x1;
+        const dirY = y2 - y1;
+        //get dir in radians
+        let dirRad = Math.atan2(dirX, dirY);
+        dirRad *= 180 / Math.PI; //becomes a range of -180, 180
+        if (returnDegrees){ //convert rad dir to degrees
+            let dirDeg = dirRad;
+            if (dirDeg < 0){
+                dirDeg = 360 + dirDeg;
+            }
+            return dirDeg;
+        }
+        return dirRad;
     }
 
     //Draws everything to the grid
@@ -128,16 +161,25 @@ export default class GridArrayController {
             //this.ctx.fillStyle = "white";
             //this.ctx.fillText(this.widthArray[i] as unknown as string, this.grid.x2 + 10, this.grid.y1 + this.grid.cellHeight * i + this.grid.cellHeight / 2);
         }
+        //Angle array
+        for (let i = 0; i < this.grid.cellCountX; i ++){
+            // if (this.angleArray[i] > 0){
+            //     this.ctx.fillStyle = this.fillColour;
+                
+            // }    
+        }
 
         this.grid.draw();
     }
 
     getJSON():string {
         return JSON.stringify({
-            arrayWidth: this.grid.cellCountX,
-            arrayHeight: this.grid.cellCountY,
+            widthArrayLength: this.grid.cellCountX,
+            heightArrayLength: this.grid.cellCountY,
+            arrayAngleLength: this.grid.cellCountX,
             widthArray: this.widthArray,
-            heightArray: this.heightArray
+            heightArray: this.heightArray,
+            angleArray: this.angleArray
         }, null, "\t");
     }
 
