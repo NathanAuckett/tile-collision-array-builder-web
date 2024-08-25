@@ -11,7 +11,9 @@ export default class GridArrayController {
     angleArray;
     outputElement;
     fillColour = "rgba(255, 255, 255, 0.3)";
+    strokeColour = "red";
     tileIndex = 0;
+    anglePrecision = 2;
     constructor(canvas, grid, heightArray, widthArray, angleArray, outputElement) {
         this.canvas = canvas;
         this.outputElement = outputElement;
@@ -46,7 +48,7 @@ export default class GridArrayController {
         this.mouseGridIndexX = this.grid.cellXIndexFromCanvasX(mouseEvent.clientX - rect.x);
         this.mouseGridIndexY = this.grid.cellYIndexFromCanvasY(mouseEvent.clientY - rect.y);
         //Height array
-        for (var i = 0; i < this.grid.cellCountX; i++) {
+        for (let i = 0; i < this.grid.cellCountX; i++) {
             if (i < this.mouseGridIndexX) {
                 if (this.heightArray[i] > this.grid.cellCountX - this.mouseGridIndexY) {
                     this.heightArray[i] = this.grid.cellCountX - this.mouseGridIndexY;
@@ -59,7 +61,7 @@ export default class GridArrayController {
             }
         }
         //widthArray
-        for (var i = 0; i < this.grid.cellCountY; i++) {
+        for (let i = 0; i < this.grid.cellCountY; i++) {
             if (i < this.mouseGridIndexY) {
                 if (this.widthArray[i] > this.grid.cellCountY - this.mouseGridIndexX) {
                     this.widthArray[i] = this.grid.cellCountY - this.mouseGridIndexX;
@@ -72,24 +74,18 @@ export default class GridArrayController {
             }
         }
         //calculate angles
-        for (var i = 0; i < this.grid.cellCountX - 1; i++) {
-            let a = this.calcAngle(this.widthArray[i] * this.grid.cellWidth, this.heightArray[i] * this.grid.cellHeight, this.widthArray[i + 1] * this.grid.cellWidth, this.heightArray[i + 1] * this.grid.cellHeight);
-            this.angleArray[i] = a;
+        for (let i = 0; i < this.grid.cellCountX - 1; i++) {
+            let a = this.calcAngle(i * this.grid.cellWidth, this.heightArray[i] * this.grid.cellHeight, (i + 1) * this.grid.cellWidth, this.heightArray[i + 1] * this.grid.cellHeight);
+            this.angleArray[i] = parseFloat(a.toFixed(this.anglePrecision));
         }
     }
     calcAngle(x1, y1, x2, y2, returnDegrees = true) {
         //subtract vectors to get direction vector
         const dirX = x2 - x1;
         const dirY = y2 - y1;
-        //get dir in radians
-        let dirRad = Math.atan2(dirX, dirY);
-        dirRad *= 180 / Math.PI; //becomes a range of -180, 180
-        if (returnDegrees) { //convert rad dir to degrees
-            let dirDeg = dirRad;
-            if (dirDeg < 0) {
-                dirDeg = 360 + dirDeg;
-            }
-            return dirDeg;
+        let dirRad = Math.atan2(dirY, dirX); //get dir in radians
+        if (returnDegrees) {
+            return this.radToDeg(dirRad);
         }
         return dirRad;
     }
@@ -121,13 +117,25 @@ export default class GridArrayController {
             //this.ctx.fillStyle = "white";
             //this.ctx.fillText(this.widthArray[i] as unknown as string, this.grid.x2 + 10, this.grid.y1 + this.grid.cellHeight * i + this.grid.cellHeight / 2);
         }
-        //Angle array
-        // for (let i = 0; i < this.grid.cellCountX; i ++){
-        //     if (this.angleArray[i] > 0){
-        //         this.ctx.fillStyle = this.fillColour;
-        //     }    
-        // }
         this.grid.draw();
+        //Angle array
+        this.ctx.strokeStyle = this.strokeColour;
+        for (let i = 0; i < this.grid.cellCountX; i++) {
+            this.ctx.beginPath();
+            let xx = this.grid.x1 + i * this.grid.cellWidth;
+            let yy = this.grid.y2 - this.heightArray[i] * this.grid.cellHeight;
+            this.ctx.moveTo(xx, yy);
+            let x2 = xx + this.grid.cellWidth * Math.cos(this.degToRad(this.angleArray[i]));
+            let y2 = yy - this.grid.cellHeight * Math.sin(this.degToRad(this.angleArray[i]));
+            this.ctx.lineTo(x2, y2);
+            this.ctx.stroke();
+        }
+    }
+    degToRad(angle) {
+        return angle * (Math.PI / 180);
+    }
+    radToDeg(angle) {
+        return angle * (180 / Math.PI);
     }
     getJSON() {
         return JSON.stringify({
@@ -141,5 +149,14 @@ export default class GridArrayController {
     }
     updateOutput(str) {
         this.outputElement.value = str;
+    }
+    //Debug function
+    drawX(x, y, size) {
+        this.ctx.beginPath();
+        this.ctx.moveTo(x - size, y);
+        this.ctx.lineTo(x + size, y);
+        this.ctx.moveTo(x, y - size);
+        this.ctx.lineTo(x, y + size);
+        this.ctx.stroke();
     }
 }
