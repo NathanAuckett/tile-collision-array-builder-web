@@ -5,6 +5,7 @@ import TileSet from "./TileSet.js";
 const fileSelect = document.getElementById("fileSelect");
 const inputTileIndex = document.getElementById("tileIndex");
 const inputCellCount = document.getElementById("cellCount");
+const inputSmoothFactor = document.getElementById("smoothFactor");
 const output = document.getElementById("output");
 function main() {
     const gridCanvas = document.getElementById("gridCanvas");
@@ -14,7 +15,7 @@ function main() {
     tileSelectCanvas.width = 400;
     tileSelectCanvas.height = 200;
     let selectedImage;
-    const grid = new Grid(gridCanvas, 32, 32, gridCanvas.width - 32, gridCanvas.height - 32, 64, 64);
+    const grid = new Grid(gridCanvas, 32, 32, gridCanvas.width - 32, gridCanvas.height - 32, 32, 32);
     let heightArray = new Array(grid.cellCountX).fill(0);
     let widthArray = new Array(grid.cellCountY).fill(0);
     let angleArray = new Array(grid.cellCountX).fill(0);
@@ -73,6 +74,13 @@ function main() {
         widthArray = new Array(grid.cellCountY).fill(0);
         angleArray = new Array(grid.cellCountX).fill(0);
         gridArrayController = new GridArrayController(gridCanvas, grid, heightArray, widthArray, angleArray, output);
+        gridArrayController.drawAll();
+    });
+    inputSmoothFactor.addEventListener("change", (e) => {
+        const target = e.target;
+        let value = parseInt(target.value);
+        gridArrayController.angleSmoothFactor = value;
+        gridArrayController.smoothAngleArray();
         gridArrayController.drawAll();
     });
 }

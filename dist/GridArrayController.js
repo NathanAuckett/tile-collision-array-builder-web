@@ -15,7 +15,6 @@ export default class GridArrayController {
     tileIndex = 0;
     anglePrecision = 2;
     angleSmoothFactor = 0.5;
-    smoothAngles = false;
     constructor(canvas, grid, heightArray, widthArray, angleArray, outputElement) {
         this.canvas = canvas;
         this.outputElement = outputElement;
@@ -31,10 +30,14 @@ export default class GridArrayController {
                 this.drawAll();
             }
         });
+        this.canvas.addEventListener("mouseup", (e) => {
+            if (e.button == 0) {
+                this.updateOutput(this.getJSON());
+            }
+        });
         window.addEventListener("mouseup", (e) => {
             if (e.button == 0) {
                 this.mousePressed = false;
-                this.updateOutput(this.getJSON());
             }
         });
         //Continue drawing if mouse is held and dragged
@@ -81,14 +84,7 @@ export default class GridArrayController {
             this.angleArray[i] = parseFloat(a.toFixed(this.anglePrecision));
         }
         //Smooth angles by lerping
-        if (this.smoothAngles) {
-            for (let i = this.grid.cellCountX - 2; i > 0; i--) {
-                let prevAngle = this.angleArray[i + 1];
-                let thisAngle = this.angleArray[i];
-                thisAngle += this.angleSmoothFactor * (prevAngle - thisAngle);
-                this.angleArray[i] = thisAngle;
-            }
-        }
+        this.smoothAngleArray();
     }
     calcAngle(x1, y1, x2, y2, returnDegrees = true) {
         //subtract vectors to get direction vector
@@ -99,6 +95,16 @@ export default class GridArrayController {
             return this.radToDeg(dirRad);
         }
         return dirRad;
+    }
+    smoothAngleArray() {
+        if (this.angleSmoothFactor > 0) {
+            for (let i = this.grid.cellCountX - 2; i > 0; i--) {
+                let prevAngle = this.angleArray[i + 1];
+                let thisAngle = this.angleArray[i];
+                thisAngle += this.angleSmoothFactor * (prevAngle - thisAngle);
+                this.angleArray[i] = thisAngle;
+            }
+        }
     }
     //Draws everything to the grid
     drawAll() {

@@ -18,7 +18,6 @@ export default class GridArrayController {
     tileIndex = 0;
     anglePrecision = 2;
     angleSmoothFactor = 0.5;
-    smoothAngles = false;
 
     constructor (canvas: HTMLCanvasElement, grid: Grid, heightArray: number[], widthArray: number[], angleArray: number[], outputElement: HTMLInputElement|HTMLTextAreaElement){
         this.canvas = canvas;
@@ -36,11 +35,16 @@ export default class GridArrayController {
                 this.drawAll();
             }
         });
+
+        this.canvas.addEventListener("mouseup", (e) => { //we don't want to update the output unless we stop drawing, window would make releasing mouse anywhere update it
+            if (e.button == 0){
+                this.updateOutput(this.getJSON());
+            }
+        });
         
         window.addEventListener("mouseup", (e) => { //this one uses window so if you click and drag out of the canvas it will still stop drawing
             if (e.button == 0){
                 this.mousePressed = false;
-                this.updateOutput(this.getJSON());
             }
         });
     
@@ -97,17 +101,7 @@ export default class GridArrayController {
         }
 
         //Smooth angles by lerping
-        if (this.smoothAngles){
-            for (let i = this.grid.cellCountX - 2; i > 0; i --){
-                let prevAngle = this.angleArray[i + 1];
-                
-                let thisAngle = this.angleArray[i];
-                
-                thisAngle += this.angleSmoothFactor * (prevAngle - thisAngle);
-                
-                this.angleArray[i] = thisAngle;
-            }
-        }
+        this.smoothAngleArray();
     }
 
     calcAngle(x1, y1, x2, y2, returnDegrees = true){
@@ -119,6 +113,19 @@ export default class GridArrayController {
             return this.radToDeg(dirRad);
         }
         return dirRad;
+    }
+
+    smoothAngleArray(){
+        if (this.angleSmoothFactor > 0){
+            for (let i = this.grid.cellCountX - 2; i > 0; i --){
+                let prevAngle = this.angleArray[i + 1];
+                let thisAngle = this.angleArray[i];
+                
+                thisAngle += this.angleSmoothFactor * (prevAngle - thisAngle);
+                
+                this.angleArray[i] = thisAngle;
+            }
+        }
     }
 
     //Draws everything to the grid
