@@ -5,7 +5,7 @@ import TileSet from "./TileSet.js";
 
 const fileSelect = document.getElementById("fileSelect");
 const inputTileIndex = document.getElementById("tileIndex") as HTMLInputElement;
-const inputGridCellCountH = document.getElementById("horizontalCells") as HTMLInputElement;
+const inputCellCount = document.getElementById("cellCount") as HTMLInputElement;
 const output = document.getElementById("output") as HTMLTextAreaElement;
 
 function main(){
@@ -18,10 +18,10 @@ function main(){
     let selectedImage: HTMLImageElement;
     
     const grid = new Grid(gridCanvas, 32, 32, gridCanvas.width - 32, gridCanvas.height - 32, 64, 64);
-    const heightArray = new Array(grid.cellCountX).fill(0);
-    const widthArray = new Array(grid.cellCountY).fill(0);
-    const angleArray = new Array(grid.cellCountX).fill(0);
-    const gridArrayController = new GridArrayController(gridCanvas, grid, heightArray, widthArray, angleArray, output);
+    let heightArray = new Array(grid.cellCountX).fill(0);
+    let widthArray = new Array(grid.cellCountY).fill(0);
+    let angleArray = new Array(grid.cellCountX).fill(0);
+    let gridArrayController = new GridArrayController(gridCanvas, grid, heightArray, widthArray, angleArray, output);
     let tileSelectCanvasController: TileSelectCanvasController;
     let tileSet: TileSet;
 
@@ -69,18 +69,21 @@ function main(){
     });
 
     //Handle grid Cell count changes - not working yet
-    // inputGridCellCountH.addEventListener("change", (e) => {
-    //     const target = e.target as HTMLInputElement;
-    //     let value = parseInt(target.value);
-    //     if (value < 1){
-    //         value = 1;
-    //         target.value = value.toString();
-    //     }
-    //     grid.setCellCountX(value);
-    //     widthArray = new Array(grid.cellCountY).fill(0);
-    //     gridArrayController.widthArray = widthArray;
-    //     gridArrayController.drawAll();
-    // });
+    inputCellCount.addEventListener("change", (e) => {
+        const target = e.target as HTMLInputElement;
+        let value = parseInt(target.value);
+        if (value < 1){
+            value = 1;
+            target.value = value.toString();
+        }
+        grid.setCellCountX(value);
+        grid.setCellCountY(value);
+        heightArray = new Array(grid.cellCountX).fill(0);
+        widthArray = new Array(grid.cellCountY).fill(0);
+        angleArray = new Array(grid.cellCountX).fill(0);
+        gridArrayController = new GridArrayController(gridCanvas, grid, heightArray, widthArray, angleArray, output);
+        gridArrayController.drawAll();
+    });
 }
 
 window.addEventListener("load", function(){

@@ -15,6 +15,7 @@ export default class GridArrayController {
     tileIndex = 0;
     anglePrecision = 2;
     angleSmoothFactor = 0.5;
+    smoothAngles = false;
     constructor(canvas, grid, heightArray, widthArray, angleArray, outputElement) {
         this.canvas = canvas;
         this.outputElement = outputElement;
@@ -80,11 +81,13 @@ export default class GridArrayController {
             this.angleArray[i] = parseFloat(a.toFixed(this.anglePrecision));
         }
         //Smooth angles by lerping
-        for (let i = this.grid.cellCountX - 2; i > 0; i--) {
-            let prevAngle = this.angleArray[i + 1];
-            let thisAngle = this.angleArray[i];
-            thisAngle += this.angleSmoothFactor * (prevAngle - thisAngle);
-            this.angleArray[i] = thisAngle;
+        if (this.smoothAngles) {
+            for (let i = this.grid.cellCountX - 2; i > 0; i--) {
+                let prevAngle = this.angleArray[i + 1];
+                let thisAngle = this.angleArray[i];
+                thisAngle += this.angleSmoothFactor * (prevAngle - thisAngle);
+                this.angleArray[i] = thisAngle;
+            }
         }
     }
     calcAngle(x1, y1, x2, y2, returnDegrees = true) {
