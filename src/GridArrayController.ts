@@ -18,6 +18,8 @@ export default class GridArrayController {
     tileIndex = 0;
     anglePrecision = 2;
     angleSmoothFactor = 0.5;
+    initialAngle = 0;
+    lastAngle = 90;
 
     constructor (canvas: HTMLCanvasElement, grid: Grid, heightArray: number[], widthArray: number[], angleArray: number[], outputElement: HTMLInputElement|HTMLTextAreaElement){
         this.canvas = canvas;
@@ -97,8 +99,10 @@ export default class GridArrayController {
                 (i + 1) * this.grid.cellWidth,
                 this.heightArray[i + 1] * this.grid.cellHeight,
             );
-            this.angleArray[i] = parseFloat(a.toFixed(this.anglePrecision));
+            this.angleArray[i] = a;
         }
+        this.angleArray[0] = this.initialAngle;
+        this.angleArray[this.angleArray.length - 1] = this.lastAngle;
 
         //Smooth angles by lerping
         this.smoothAngleArray();
@@ -117,13 +121,14 @@ export default class GridArrayController {
 
     smoothAngleArray(){
         if (this.angleSmoothFactor > 0){
-            for (let i = this.grid.cellCountX - 2; i > 0; i --){
+            for (let i = this.grid.cellCountX - 2; i > 1; i --){
                 let prevAngle = this.angleArray[i + 1];
                 let thisAngle = this.angleArray[i];
                 
                 thisAngle += this.angleSmoothFactor * (prevAngle - thisAngle);
                 
-                this.angleArray[i] = thisAngle;
+                this.angleArray[i] = parseFloat(thisAngle.toFixed(this.anglePrecision));
+                //this.angleArray[i] = thisAngle;
             }
         }
     }

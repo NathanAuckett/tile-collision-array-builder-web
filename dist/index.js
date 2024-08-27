@@ -3,10 +3,12 @@ import GridArrayController from "./GridArrayController.js";
 import TileSelectCanvasController from "./TileSelectCanvasController.js";
 import TileSet from "./TileSet.js";
 const fileSelect = document.getElementById("fileSelect");
+const output = document.getElementById("output");
 const inputTileIndex = document.getElementById("tileIndex");
 const inputCellCount = document.getElementById("cellCount");
+const inputInitialAngle = document.getElementById("initialAngle");
+const inputLastAngle = document.getElementById("lastAngle");
 const inputSmoothFactor = document.getElementById("smoothFactor");
-const output = document.getElementById("output");
 function main() {
     const gridCanvas = document.getElementById("gridCanvas");
     gridCanvas.width = 700;
@@ -76,9 +78,43 @@ function main() {
         gridArrayController = new GridArrayController(gridCanvas, grid, heightArray, widthArray, angleArray, output);
         gridArrayController.drawAll();
     });
+    inputInitialAngle.addEventListener("change", (e) => {
+        const target = e.target;
+        let value = parseInt(target.value);
+        if (value > 90) {
+            value = 90;
+            target.value = value.toString();
+        }
+        else if (value < 0) {
+            value = 0;
+            target.value = value.toString();
+        }
+        gridArrayController.initialAngle = value;
+    });
+    inputLastAngle.addEventListener("change", (e) => {
+        const target = e.target;
+        let value = parseInt(target.value);
+        if (value > 90) {
+            value = 90;
+            target.value = value.toString();
+        }
+        else if (value < 0) {
+            value = 0;
+            target.value = value.toString();
+        }
+        gridArrayController.lastAngle = value;
+    });
     inputSmoothFactor.addEventListener("change", (e) => {
         const target = e.target;
         let value = parseInt(target.value);
+        if (value > 1) {
+            value = 1;
+            target.value = value.toString();
+        }
+        else if (value < 0) {
+            value = 0;
+            target.value = value.toString();
+        }
         gridArrayController.angleSmoothFactor = value;
         gridArrayController.smoothAngleArray();
         gridArrayController.drawAll();
