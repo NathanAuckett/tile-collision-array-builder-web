@@ -119,7 +119,7 @@ function main(){
 
     inputSmoothFactor.addEventListener("change", (e) => {
         const target = e.target as HTMLInputElement;
-        let value = parseInt(target.value);
+        let value = parseFloat(target.value);
         if (value > 1){
             value = 1;
             target.value = value.toString();
@@ -129,6 +129,7 @@ function main(){
             target.value = value.toString();
         }
         gridArrayController.angleSmoothFactor = value;
+        gridArrayController.calcArrayAngles();
         gridArrayController.smoothAngleArray();
         gridArrayController.drawAll();
     });
