@@ -81,14 +81,17 @@ export default class GridArrayController {
             }
         }
         //calculate angles
-        for (let i = 0; i < this.grid.cellCountX - 1; i++) {
-            let a = this.calcAngle(i * this.grid.cellWidth, this.heightArray[i] * this.grid.cellHeight, (i + 1) * this.grid.cellWidth, this.heightArray[i + 1] * this.grid.cellHeight);
-            this.angleArray[i] = a;
-        }
+        this.calcArrayAngles();
         this.angleArray[0] = this.initialAngle;
         this.angleArray[this.angleArray.length - 1] = this.lastAngle;
         //Smooth angles by lerping
         this.smoothAngleArray();
+    }
+    calcArrayAngles() {
+        for (let i = 0; i < this.grid.cellCountX - 1; i++) {
+            let a = this.calcAngle(i * this.grid.cellWidth, this.heightArray[i] * this.grid.cellHeight, (i + 1) * this.grid.cellWidth, this.heightArray[i + 1] * this.grid.cellHeight);
+            this.angleArray[i] = a;
+        }
     }
     calcAngle(x1, y1, x2, y2, returnDegrees = true) {
         //subtract vectors to get direction vector

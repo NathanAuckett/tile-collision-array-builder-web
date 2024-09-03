@@ -92,6 +92,15 @@ export default class GridArrayController {
             }
         }
         //calculate angles
+        this.calcArrayAngles();
+        this.angleArray[0] = this.initialAngle;
+        this.angleArray[this.angleArray.length - 1] = this.lastAngle;
+
+        //Smooth angles by lerping
+        this.smoothAngleArray();
+    }
+
+    calcArrayAngles(){
         for (let i = 0; i < this.grid.cellCountX - 1; i ++){
             let a = this.calcAngle(
                 i * this.grid.cellWidth,
@@ -101,11 +110,6 @@ export default class GridArrayController {
             );
             this.angleArray[i] = a;
         }
-        this.angleArray[0] = this.initialAngle;
-        this.angleArray[this.angleArray.length - 1] = this.lastAngle;
-
-        //Smooth angles by lerping
-        this.smoothAngleArray();
     }
 
     calcAngle(x1, y1, x2, y2, returnDegrees = true){
