@@ -37,21 +37,33 @@
                     <div class="row mt-4 onlyWhenFile">
                         <h4>Grid Settings:</h4>
                         <div>
-                            <input type="number" id="cellCount" min="0" step="2" style="width: 60px;" value="64"/>
+                            <input type="number" id="cellCount" min="0" step="2" style="width: 60px;" value="32"/>
                             <label for="cellCount">Cells&sup2;</label>
                         </div>
                         <h4>Angle Settings:</h4>
                         <div>
-                            <input type="number" id="initialAngle" min="0" max="90" style="width: 60px;" value="0"/>
-                            <label for="initialAngle">Initial Angle</label>
+                            <div>
+                                <input type="checkbox" id="singleAngleValue">
+                                <label for="arrayAngle">Use single angle value</label>
+                            </div>
+                            <div id="angleInput" style="display: none;">
+                                <input type="number" id="angle" min="0" max="90" style="width: 60px;" value="0"/>
+                                <label for="angle">Angle</label>
+                            </div>
                         </div>
-                        <div>
-                            <input type="number" id="lastAngle" min="0" max="90" style="width: 60px;" value="90"/>
-                            <label for="lastAngle">Last Angle</label>
-                        </div>
-                        <div>
-                            <input type="number" id="smoothFactor" min="0" max="1" step="0.1" style="width: 60px;" value="0.5"/>
-                            <label for="smoothFactor">Smooth Factor</label>
+                        <div id="arrayAngleSettings">
+                            <div>
+                                <input type="number" id="initialAngle" min="0" max="90" style="width: 60px;" value="0"/>
+                                <label for="initialAngle">Initial Angle</label>
+                            </div>
+                            <div>
+                                <input type="number" id="lastAngle" min="0" max="90" style="width: 60px;" value="90"/>
+                                <label for="lastAngle">Last Angle</label>
+                            </div>
+                            <div>
+                                <input type="number" id="smoothFactor" min="0" max="1" step="0.1" style="width: 60px;" value="0.5"/>
+                                <label for="smoothFactor">Smooth Factor</label>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -6,6 +6,8 @@ const fileSelect = document.getElementById("fileSelect");
 const output = document.getElementById("output");
 const inputTileIndex = document.getElementById("tileIndex");
 const inputCellCount = document.getElementById("cellCount");
+const inputSingleAngleValue = document.getElementById("singleAngleValue");
+const inputAngle = document.getElementById("angle");
 const inputInitialAngle = document.getElementById("initialAngle");
 const inputLastAngle = document.getElementById("lastAngle");
 const inputSmoothFactor = document.getElementById("smoothFactor");
@@ -31,7 +33,7 @@ function main() {
         const src = URL.createObjectURL(target.files[0]);
         selectedImage = new Image();
         selectedImage.onload = () => {
-            tileSet = new TileSet(selectedImage, 64, 64);
+            tileSet = new TileSet(selectedImage, grid.cellCountX, grid.cellCountY);
             tileSelectCanvasController = new TileSelectCanvasController(tileSelectCanvas, tileSet, inputTileIndex);
             gridArrayController.tileSet = tileSet;
             gridArrayController.drawAll();
@@ -90,6 +92,9 @@ function main() {
             target.value = value.toString();
         }
         gridArrayController.initialAngle = value;
+        gridArrayController.calcArrayAngles();
+        gridArrayController.smoothAngleArray();
+        gridArrayController.drawAll();
     });
     inputLastAngle.addEventListener("change", (e) => {
         const target = e.target;
@@ -103,6 +108,9 @@ function main() {
             target.value = value.toString();
         }
         gridArrayController.lastAngle = value;
+        gridArrayController.calcArrayAngles();
+        gridArrayController.smoothAngleArray();
+        gridArrayController.drawAll();
     });
     inputSmoothFactor.addEventListener("change", (e) => {
         const target = e.target;
@@ -119,6 +127,38 @@ function main() {
         gridArrayController.calcArrayAngles();
         gridArrayController.smoothAngleArray();
         gridArrayController.drawAll();
+    });
+    inputAngle.addEventListener("change", (e) => {
+        const target = e.target;
+        let value = parseFloat(target.value);
+        if (value > 90) {
+            value = 90;
+            target.value = value.toString();
+        }
+        else if (value < 0) {
+            value = 0;
+            target.value = value.toString();
+        }
+        gridArrayController.angle = value;
+        gridArrayController.updateOutput(gridArrayController.getJSON());
+        gridArrayController.drawAll();
+    });
+    inputSingleAngleValue.addEventListener("change", (e) => {
+        const target = e.target;
+        const arrayInputDiv = document.getElementById("arrayAngleSettings");
+        const angleInputDiv = document.getElementById("angleInput");
+        if (target.checked) {
+            angleInputDiv.style.display = "initial";
+            arrayInputDiv.style.display = "none";
+            gridArrayController.useAngleArray = false;
+        }
+        else {
+            angleInputDiv.style.display = "none";
+            arrayInputDiv.style.display = "initial";
+            gridArrayController.useAngleArray = true;
+        }
+        gridArrayController.drawAll();
+        gridArrayController.updateOutput(gridArrayController.getJSON());
     });
 }
 window.addEventListener("load", function () {

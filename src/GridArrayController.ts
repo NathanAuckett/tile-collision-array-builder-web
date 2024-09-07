@@ -16,6 +16,8 @@ export default class GridArrayController {
     fillColour = "rgba(255, 255, 255, 0.3)";
     strokeColour = "red";
     tileIndex = 0;
+    useAngleArray = true;
+    angle = 0;
     anglePrecision = 2;
     angleSmoothFactor = 0.5;
     initialAngle = 0;
@@ -92,12 +94,12 @@ export default class GridArrayController {
             }
         }
         //calculate angles
-        this.calcArrayAngles();
-        this.angleArray[0] = this.initialAngle;
-        this.angleArray[this.angleArray.length - 1] = this.lastAngle;
+        if (this.useAngleArray){
+            this.calcArrayAngles();
 
-        //Smooth angles by lerping
-        this.smoothAngleArray();
+            //Smooth angles by lerping
+            this.smoothAngleArray();
+        }
     }
 
     calcArrayAngles(){
@@ -110,6 +112,9 @@ export default class GridArrayController {
             );
             this.angleArray[i] = a;
         }
+
+        this.angleArray[0] = this.initialAngle;
+        this.angleArray[this.angleArray.length - 1] = this.lastAngle;
     }
 
     calcAngle(x1, y1, x2, y2, returnDegrees = true){
@@ -186,18 +191,20 @@ export default class GridArrayController {
         this.grid.draw();
         
         //Angle array
-        this.ctx.strokeStyle = this.strokeColour;
-        for (let i = 0; i < this.grid.cellCountX; i ++){
-            this.ctx.beginPath();
+        if (this.useAngleArray){
+            this.ctx.strokeStyle = this.strokeColour;
+            for (let i = 0; i < this.grid.cellCountX; i ++){
+                this.ctx.beginPath();
 
-            let xx = this.grid.x1 + i * this.grid.cellWidth;
-            let yy = this.grid.y2 - this.heightArray[i] * this.grid.cellHeight;
-            this.ctx.moveTo(xx, yy);
-            
-            let x2 = xx + this.grid.cellWidth * Math.cos(this.degToRad(this.angleArray[i]));
-            let y2 = yy - this.grid.cellHeight * Math.sin(this.degToRad(this.angleArray[i]));
-            this.ctx.lineTo(x2, y2);
-            this.ctx.stroke();
+                let xx = this.grid.x1 + i * this.grid.cellWidth;
+                let yy = this.grid.y2 - this.heightArray[i] * this.grid.cellHeight;
+                this.ctx.moveTo(xx, yy);
+                
+                let x2 = xx + this.grid.cellWidth * Math.cos(this.degToRad(this.angleArray[i]));
+                let y2 = yy - this.grid.cellHeight * Math.sin(this.degToRad(this.angleArray[i]));
+                this.ctx.lineTo(x2, y2);
+                this.ctx.stroke();
+            }
         }
     }
 
@@ -210,14 +217,22 @@ export default class GridArrayController {
     }
     
     getJSON():string {
-        return JSON.stringify({
+        const output = {
             widthArrayLength: this.grid.cellCountX,
             heightArrayLength: this.grid.cellCountY,
-            arrayAngleLength: this.grid.cellCountX,
             widthArray: this.widthArray,
-            heightArray: this.heightArray,
-            angleArray: this.angleArray
-        }, null, "\t");
+            heightArray: this.heightArray
+        };
+        if (this.useAngleArray){
+            output["angleArray"] = this.angleArray;
+            output["angleArrayLength"] = this.grid.cellCountX;
+        }
+        else{
+            output["angleArray"] = this.angle;
+            output["angleArrayLength"] = 1;
+        }
+
+        return JSON.stringify(output, null, "\t");
     }
 
     updateOutput(str: string){

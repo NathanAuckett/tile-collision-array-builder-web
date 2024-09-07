@@ -8,6 +8,8 @@ const output = document.getElementById("output") as HTMLTextAreaElement;
 
 const inputTileIndex = document.getElementById("tileIndex") as HTMLInputElement;
 const inputCellCount = document.getElementById("cellCount") as HTMLInputElement;
+const inputSingleAngleValue = document.getElementById("singleAngleValue") as HTMLInputElement;
+const inputAngle = document.getElementById("angle") as HTMLInputElement;
 const inputInitialAngle = document.getElementById("initialAngle") as HTMLInputElement;
 const inputLastAngle = document.getElementById("lastAngle") as HTMLInputElement;
 const inputSmoothFactor = document.getElementById("smoothFactor") as HTMLInputElement;
@@ -38,7 +40,7 @@ function main(){
     
         selectedImage = new Image();
         selectedImage.onload = () => {
-            tileSet = new TileSet(selectedImage, 64, 64);
+            tileSet = new TileSet(selectedImage, grid.cellCountX, grid.cellCountY);
             tileSelectCanvasController = new TileSelectCanvasController(tileSelectCanvas, tileSet, inputTileIndex);
             gridArrayController.tileSet = tileSet;
             gridArrayController.drawAll();
@@ -101,6 +103,9 @@ function main(){
             target.value = value.toString();
         }
         gridArrayController.initialAngle = value;
+        gridArrayController.calcArrayAngles();
+        gridArrayController.smoothAngleArray();
+        gridArrayController.drawAll();
     });
 
     inputLastAngle.addEventListener("change", (e) => {
@@ -115,6 +120,9 @@ function main(){
             target.value = value.toString();
         }
         gridArrayController.lastAngle = value;
+        gridArrayController.calcArrayAngles();
+        gridArrayController.smoothAngleArray();
+        gridArrayController.drawAll();
     });
 
     inputSmoothFactor.addEventListener("change", (e) => {
@@ -132,6 +140,40 @@ function main(){
         gridArrayController.calcArrayAngles();
         gridArrayController.smoothAngleArray();
         gridArrayController.drawAll();
+    });
+
+    inputAngle.addEventListener("change", (e) => {
+        const target = e.target as HTMLInputElement;
+        let value = parseFloat(target.value);
+        if (value > 90){
+            value = 90;
+            target.value = value.toString();
+        }
+        else if (value < 0){
+            value = 0;
+            target.value = value.toString();
+        }
+        gridArrayController.angle = value;
+        gridArrayController.updateOutput(gridArrayController.getJSON());
+        gridArrayController.drawAll();
+    });
+
+    inputSingleAngleValue.addEventListener("change", (e) => {
+        const target = e.target as HTMLInputElement;
+        const arrayInputDiv = document.getElementById("arrayAngleSettings") as HTMLElement;
+        const angleInputDiv = document.getElementById("angleInput") as HTMLElement;
+        if (target.checked){
+            angleInputDiv.style.display = "initial";
+            arrayInputDiv.style.display = "none";
+            gridArrayController.useAngleArray = false;
+        }
+        else{
+            angleInputDiv.style.display = "none";
+            arrayInputDiv.style.display = "initial";
+            gridArrayController.useAngleArray = true;
+        }
+        gridArrayController.drawAll();
+        gridArrayController.updateOutput(gridArrayController.getJSON());
     });
 }
 
