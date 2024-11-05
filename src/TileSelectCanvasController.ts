@@ -21,7 +21,12 @@ export default class TileSelectCanvasController {
                 this.blockContextMenu = true;
             }
         });
-        
+        this.canvas.addEventListener("mouseup", (e) => {
+            if (e.button == 0){
+                this.handleClick(e);
+            }
+        });
+
         window.addEventListener("contextmenu", (e) => {
             if (this.blockContextMenu){
                 e.preventDefault();
@@ -30,10 +35,7 @@ export default class TileSelectCanvasController {
         });
         
         window.addEventListener("mouseup", (e) => { //this one uses window so if you click and drag out of the canvas it will still stop drawing
-            if (e.button == 0){
-                this.handleClick(e);
-            }
-            else if (e.button == 2){
+            if (e.button == 2){
                 this.mousePressed = false;
             }
         });
