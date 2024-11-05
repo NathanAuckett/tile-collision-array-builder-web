@@ -61,6 +61,14 @@ export default class TileSet {
         const ctx = canvas.getContext("2d");
         ctx.imageSmoothingEnabled = false;
 
+        ctx.fillStyle = "white";
+        ctx.fillRect(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
         ctx.drawImage(
             this.image,
             x,

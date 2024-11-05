@@ -16,8 +16,8 @@ function main() {
     gridCanvas.width = 700;
     gridCanvas.height = 700;
     const tileSelectCanvas = document.getElementById("tileSelectCanvas");
-    tileSelectCanvas.width = 400;
-    tileSelectCanvas.height = 200;
+    tileSelectCanvas.width = 512;
+    tileSelectCanvas.height = 256;
     let selectedImage;
     const grid = new Grid(gridCanvas, 32, 32, gridCanvas.width - 32, gridCanvas.height - 32, parseInt(inputCellCount.value), parseInt(inputCellCount.value));
     let heightArray = new Array(grid.cellCountX).fill(0);
