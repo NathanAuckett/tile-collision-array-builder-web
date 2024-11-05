@@ -16,14 +16,12 @@ export default class TileSelectCanvasController {
         this.tileIndexInput = tileIndexInput;
 
         this.canvas.addEventListener("mousedown", (e) => {
-            if (e.button == 2){
-                this.mousePressed = true;
-                this.blockContextMenu = true;
-            }
-        });
-        this.canvas.addEventListener("mouseup", (e) => {
             if (e.button == 0){
                 this.handleClick(e);
+            }
+            else if (e.button == 2){
+                this.mousePressed = true;
+                this.blockContextMenu = true;
             }
         });
 
@@ -69,15 +67,7 @@ export default class TileSelectCanvasController {
             const index = cellX + this.tileset.tileCountX * cellY;
 
             this.tileIndexInput.value = index.toString();
-            
-            const createEvent = new Promise((resolve, reject) => {
-                const changeEvent = new Event("change");
-                resolve(changeEvent);
-            });
-
-            createEvent.then((changeEvent: Event) => {
-                this.tileIndexInput.dispatchEvent(changeEvent);
-            });
+            this.tileIndexInput.dispatchEvent(new Event("change"));
         }
     }
 }

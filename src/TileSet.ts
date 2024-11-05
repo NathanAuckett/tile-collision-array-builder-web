@@ -10,17 +10,17 @@ export default class TileSet {
     tileCountX: number;
     tileCountY: number;
     
-    constructor (image: HTMLImageElement, tileWidth: number, tileHeight: number){
+    constructor (image: HTMLImageElement, tileWidth: number, tileHeight: number, grid: Grid){
         this.image = image;
         this.tileWidth = tileWidth;
         this.tileHeight = tileHeight;
         this.tileCountX = Math.floor(this.image.width / this.tileWidth);
         this.tileCountY = Math.floor(this.image.height / this.tileHeight);
 
-        this.generateTiles();
+        this.generateTiles(grid);
     }
 
-    generateTiles(){
+    generateTiles(grid){
         for (let y = 0; y < this.tileCountY; y ++){
             for (let x = 0; x < this.tileCountX; x ++){
                 this.tiles.push(
@@ -29,7 +29,8 @@ export default class TileSet {
                         this.tileWidth * x,
                         this.tileHeight * y,
                         this.tileWidth,
-                        this.tileHeight
+                        this.tileHeight,
+                        grid
                     )
                 );
             }

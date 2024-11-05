@@ -7,18 +7,18 @@ export default class TileSet {
     tileCount;
     tileCountX;
     tileCountY;
-    constructor(image, tileWidth, tileHeight) {
+    constructor(image, tileWidth, tileHeight, grid) {
         this.image = image;
         this.tileWidth = tileWidth;
         this.tileHeight = tileHeight;
         this.tileCountX = Math.floor(this.image.width / this.tileWidth);
         this.tileCountY = Math.floor(this.image.height / this.tileHeight);
-        this.generateTiles();
+        this.generateTiles(grid);
     }
-    generateTiles() {
+    generateTiles(grid) {
         for (let y = 0; y < this.tileCountY; y++) {
             for (let x = 0; x < this.tileCountX; x++) {
-                this.tiles.push(new Tile(this.image, this.tileWidth * x, this.tileHeight * y, this.tileWidth, this.tileHeight));
+                this.tiles.push(new Tile(this.image, this.tileWidth * x, this.tileHeight * y, this.tileWidth, this.tileHeight, grid));
             }
         }
         this.tileCount = this.tiles.length;

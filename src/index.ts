@@ -27,7 +27,7 @@ function main(){
     let heightArray = new Array(grid.cellCountX).fill(0);
     let widthArray = new Array(grid.cellCountY).fill(0);
     let angleArray = new Array(grid.cellCountX).fill(0);
-    let gridArrayController = new GridArrayController(gridCanvas, grid, heightArray, widthArray, angleArray, output);
+    let gridArrayController = new GridArrayController(gridCanvas, grid, output);
     let tileSelectCanvasController: TileSelectCanvasController;
     let tileSet: TileSet;
 
@@ -40,7 +40,7 @@ function main(){
     
         selectedImage = new Image();
         selectedImage.onload = () => {
-            tileSet = new TileSet(selectedImage, grid.cellCountX, grid.cellCountY);
+            tileSet = new TileSet(selectedImage, grid.cellCountX, grid.cellCountY, grid);
             tileSelectCanvasController = new TileSelectCanvasController(tileSelectCanvas, tileSet, inputTileIndex);
             gridArrayController.tileSet = tileSet;
             gridArrayController.drawAll();
@@ -71,6 +71,10 @@ function main(){
             }
             gridArrayController.tileIndex = value;
             gridArrayController.drawAll();
+            gridArrayController.updateOutput(gridArrayController.getJSON());
+            console.log("checked", tileSet.tiles[value].useAngleArray);
+            inputSingleAngleValue.checked = !tileSet.tiles[value].useAngleArray;
+            inputSingleAngleValue.dispatchEvent(new Event("change"));
         }
     });
 
@@ -87,7 +91,7 @@ function main(){
         heightArray = new Array(grid.cellCountX).fill(0);
         widthArray = new Array(grid.cellCountY).fill(0);
         angleArray = new Array(grid.cellCountX).fill(0);
-        gridArrayController = new GridArrayController(gridCanvas, grid, heightArray, widthArray, angleArray, output);
+        gridArrayController = new GridArrayController(gridCanvas, grid, output);
         gridArrayController.drawAll();
     });
 
@@ -153,24 +157,27 @@ function main(){
             value = 0;
             target.value = value.toString();
         }
-        gridArrayController.angle = value;
+        tileSet.tiles[gridArrayController.tileIndex].angleValueSingle = value;
         gridArrayController.updateOutput(gridArrayController.getJSON());
         gridArrayController.drawAll();
     });
 
     inputSingleAngleValue.addEventListener("change", (e) => {
         const target = e.target as HTMLInputElement;
+        console.log(target.checked);
         const arrayInputDiv = document.getElementById("arrayAngleSettings") as HTMLElement;
         const angleInputDiv = document.getElementById("angleInput") as HTMLElement;
         if (target.checked){
             angleInputDiv.style.display = "initial";
             arrayInputDiv.style.display = "none";
-            gridArrayController.useAngleArray = false;
+            tileSet.tiles[gridArrayController.tileIndex].useAngleArray = false;
+            gridArrayController.updateOutput(gridArrayController.getJSON());
         }
         else{
             angleInputDiv.style.display = "none";
             arrayInputDiv.style.display = "initial";
-            gridArrayController.useAngleArray = true;
+            tileSet.tiles[gridArrayController.tileIndex].useAngleArray = true;
+            gridArrayController.updateOutput(gridArrayController.getJSON());
         }
         gridArrayController.drawAll();
         gridArrayController.updateOutput(gridArrayController.getJSON());

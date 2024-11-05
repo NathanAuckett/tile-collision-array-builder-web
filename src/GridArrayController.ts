@@ -9,27 +9,20 @@ export default class GridArrayController {
     ctx: CanvasRenderingContext2D;
     grid: Grid;
     tileSet: TileSet;
-    heightArray: number[];
-    widthArray: number[];
-    angleArray: number[];
     outputElement: HTMLInputElement|HTMLTextAreaElement;
     fillColour = "rgba(255, 255, 255, 0.3)";
     strokeColour = "red";
     tileIndex = 0;
-    useAngleArray = true;
     angle = 0;
     anglePrecision = 2;
     angleSmoothFactor = 0.5;
     initialAngle = 0;
     lastAngle = 90;
 
-    constructor (canvas: HTMLCanvasElement, grid: Grid, heightArray: number[], widthArray: number[], angleArray: number[], outputElement: HTMLInputElement|HTMLTextAreaElement){
+    constructor (canvas: HTMLCanvasElement, grid: Grid, outputElement: HTMLInputElement|HTMLTextAreaElement){
         this.canvas = canvas;
         this.outputElement = outputElement;
         this.grid = grid;
-        this.heightArray = heightArray;
-        this.widthArray = widthArray;
-        this.angleArray = angleArray;
         this.ctx = canvas.getContext("2d");
 
         this.canvas.addEventListener("mousedown", (e) => {
@@ -62,59 +55,67 @@ export default class GridArrayController {
     }
     
     handleClick(mouseEvent: MouseEvent){
-        const rect = this.canvas.getBoundingClientRect();
-        
-        this.mouseGridIndexX = this.grid.cellXIndexFromCanvasX(mouseEvent.clientX - rect.x);
-        this.mouseGridIndexY = this.grid.cellYIndexFromCanvasY(mouseEvent.clientY - rect.y);
-        
-        //Height array
-        for (let i = 0; i < this.grid.cellCountX; i ++){
-            if (i < this.mouseGridIndexX){
-                if (this.heightArray[i] > this.grid.cellCountX - this.mouseGridIndexY){
-                    this.heightArray[i] = this.grid.cellCountX - this.mouseGridIndexY;
+        if (this.tileSet){
+            this.tileSet.tiles[this.tileIndex].hasCollisionData = true;
+            const rect = this.canvas.getBoundingClientRect();
+            
+            this.mouseGridIndexX = this.grid.cellXIndexFromCanvasX(mouseEvent.clientX - rect.x);
+            this.mouseGridIndexY = this.grid.cellYIndexFromCanvasY(mouseEvent.clientY - rect.y);
+            
+            //Height array
+            for (let i = 0; i < this.grid.cellCountX; i ++){
+                let heightArray = this.tileSet.tiles[this.tileIndex].heightArray;
+                if (i < this.mouseGridIndexX){
+                    if (heightArray[i] > this.grid.cellCountX - this.mouseGridIndexY){
+                        heightArray[i] = this.grid.cellCountX - this.mouseGridIndexY;
+                    }
+                }
+                else{
+                    
+                    if (heightArray[i] < this.grid.cellCountX - this.mouseGridIndexY){
+                        heightArray[i] = this.grid.cellCountX - this.mouseGridIndexY;
+                    }
                 }
             }
-            else{
-                if (this.heightArray[i] < this.grid.cellCountX - this.mouseGridIndexY){
-                    this.heightArray[i] = this.grid.cellCountX - this.mouseGridIndexY;
+            //widthArray
+            for (let i = 0; i < this.grid.cellCountY; i ++){
+                let widthArray = this.tileSet.tiles[this.tileIndex].widthArray;
+                if (i < this.mouseGridIndexY){
+                    if (widthArray[i] > this.grid.cellCountY - this.mouseGridIndexX){
+                        widthArray[i] = this.grid.cellCountY - this.mouseGridIndexX;
+                    }
+                }
+                else{
+                    if (widthArray[i] < this.grid.cellCountY - this.mouseGridIndexX){
+                        widthArray[i] = this.grid.cellCountY - this.mouseGridIndexX;
+                    }
                 }
             }
-        }
-        //widthArray
-        for (let i = 0; i < this.grid.cellCountY; i ++){
-            if (i < this.mouseGridIndexY){
-                if (this.widthArray[i] > this.grid.cellCountY - this.mouseGridIndexX){
-                    this.widthArray[i] = this.grid.cellCountY - this.mouseGridIndexX;
-                }
-            }
-            else{
-                if (this.widthArray[i] < this.grid.cellCountY - this.mouseGridIndexX){
-                    this.widthArray[i] = this.grid.cellCountY - this.mouseGridIndexX;
-                }
-            }
-        }
-        //calculate angles
-        if (this.useAngleArray){
-            this.calcArrayAngles();
+            //calculate angles
+            if (this.tileSet.tiles[this.tileIndex].useAngleArray){
+                this.calcArrayAngles();
 
-            //Smooth angles by lerping
-            this.smoothAngleArray();
+                //Smooth angles by lerping
+                this.smoothAngleArray();
+            }
         }
     }
 
     calcArrayAngles(){
+        let heightArray = this.tileSet.tiles[this.tileIndex].heightArray;
+        let angleArray = this.tileSet.tiles[this.tileIndex].angleArray;
         for (let i = 0; i < this.grid.cellCountX - 1; i ++){
             let a = this.calcAngle(
                 i * this.grid.cellWidth,
-                this.heightArray[i] * this.grid.cellHeight,
+                heightArray[i] * this.grid.cellHeight,
                 (i + 1) * this.grid.cellWidth,
-                this.heightArray[i + 1] * this.grid.cellHeight,
+                heightArray[i + 1] * this.grid.cellHeight,
             );
-            this.angleArray[i] = a;
+            angleArray[i] = a;
         }
 
-        this.angleArray[0] = this.initialAngle;
-        this.angleArray[this.angleArray.length - 1] = this.lastAngle;
+        angleArray[0] = this.initialAngle;
+        angleArray[angleArray.length - 1] = this.lastAngle;
     }
 
     calcAngle(x1, y1, x2, y2, returnDegrees = true){
@@ -130,14 +131,14 @@ export default class GridArrayController {
 
     smoothAngleArray(){
         if (this.angleSmoothFactor > 0){
+            let angleArray = this.tileSet.tiles[this.tileIndex].angleArray;
             for (let i = this.grid.cellCountX - 2; i > 1; i --){
-                let prevAngle = this.angleArray[i + 1];
-                let thisAngle = this.angleArray[i];
+                let prevAngle = angleArray[i + 1];
+                let thisAngle = angleArray[i];
                 
                 thisAngle += this.angleSmoothFactor * (prevAngle - thisAngle);
                 
-                this.angleArray[i] = parseFloat(thisAngle.toFixed(this.anglePrecision));
-                //this.angleArray[i] = thisAngle;
+                angleArray[i] = parseFloat(thisAngle.toFixed(this.anglePrecision));
             }
         }
     }
@@ -156,54 +157,59 @@ export default class GridArrayController {
         //Draw tile
         if (this.tileSet){
             this.tileSet.drawTileToCanvas(this.canvas, this.grid, this.tileIndex);
-        }
+        
 
-        //Draw arrays
-        //Height array
-        for (let i = 0; i < this.grid.cellCountX; i ++){
-            if (this.heightArray[i] > 0){
-                this.ctx.fillStyle = this.fillColour;
-                this.ctx.fillRect(
-                    this.grid.x1 + this.grid.cellWidth * i,
-                    this.grid.y2 - this.grid.cellHeight * this.heightArray[i],
-                    this.grid.cellWidth,
-                    this.grid.cellHeight * this.heightArray[i]
-                );
-            }
-            //this.ctx.fillStyle = "white";
-            //this.ctx.fillText(this.heightArray[i] as unknown as string, this.grid.x1 + this.grid.cellWidth * i + this.grid.cellWidth / 2, this.grid.y2 + 20);
-        }
-        //Width array
-        for (var i = 0; i < this.grid.cellCountY; i ++){
-            if (this.widthArray[i] > 0){
-                this.ctx.fillStyle = this.fillColour;
-                this.ctx.fillRect(
-                    this.grid.x2 - this.grid.cellWidth * this.widthArray[i],
-                    this.grid.y1 + this.grid.cellHeight * i,
-                    this.grid.cellWidth * this.widthArray[i],
-                    this.grid.cellHeight
-                );
-            }
-            //this.ctx.fillStyle = "white";
-            //this.ctx.fillText(this.widthArray[i] as unknown as string, this.grid.x2 + 10, this.grid.y1 + this.grid.cellHeight * i + this.grid.cellHeight / 2);
-        }
-        
-        this.grid.draw();
-        
-        //Angle array
-        if (this.useAngleArray){
-            this.ctx.strokeStyle = this.strokeColour;
+            //Draw arrays
+            //Height array
+            let heightArray = this.tileSet.tiles[this.tileIndex].heightArray;
             for (let i = 0; i < this.grid.cellCountX; i ++){
-                this.ctx.beginPath();
+                if (heightArray[i] > 0){
+                    this.ctx.fillStyle = this.fillColour;
+                    this.ctx.fillRect(
+                        this.grid.x1 + this.grid.cellWidth * i,
+                        this.grid.y2 - this.grid.cellHeight * heightArray[i],
+                        this.grid.cellWidth,
+                        this.grid.cellHeight * heightArray[i]
+                    );
+                }
+                //this.ctx.fillStyle = "white";
+                //this.ctx.fillText(this.heightArray[i] as unknown as string, this.grid.x1 + this.grid.cellWidth * i + this.grid.cellWidth / 2, this.grid.y2 + 20);
+            }
+            //Width array
+            let widthArray = this.tileSet.tiles[this.tileIndex].widthArray;
+            for (var i = 0; i < this.grid.cellCountY; i ++){
+                if (widthArray[i] > 0){
+                    this.ctx.fillStyle = this.fillColour;
+                    this.ctx.fillRect(
+                        this.grid.x2 - this.grid.cellWidth * widthArray[i],
+                        this.grid.y1 + this.grid.cellHeight * i,
+                        this.grid.cellWidth * widthArray[i],
+                        this.grid.cellHeight
+                    );
+                }
+                //this.ctx.fillStyle = "white";
+                //this.ctx.fillText(this.widthArray[i] as unknown as string, this.grid.x2 + 10, this.grid.y1 + this.grid.cellHeight * i + this.grid.cellHeight / 2);
+            }
+        
+        
+            this.grid.draw();
+            
+            //Angle array
+            if (this.tileSet.tiles[this.tileIndex].useAngleArray){
+                let angleArray = this.tileSet.tiles[this.tileIndex].angleArray;
+                this.ctx.strokeStyle = this.strokeColour;
+                for (let i = 0; i < this.grid.cellCountX; i ++){
+                    this.ctx.beginPath();
 
-                let xx = this.grid.x1 + i * this.grid.cellWidth;
-                let yy = this.grid.y2 - this.heightArray[i] * this.grid.cellHeight;
-                this.ctx.moveTo(xx, yy);
-                
-                let x2 = xx + this.grid.cellWidth * Math.cos(this.degToRad(this.angleArray[i]));
-                let y2 = yy - this.grid.cellHeight * Math.sin(this.degToRad(this.angleArray[i]));
-                this.ctx.lineTo(x2, y2);
-                this.ctx.stroke();
+                    let xx = this.grid.x1 + i * this.grid.cellWidth;
+                    let yy = this.grid.y2 - heightArray[i] * this.grid.cellHeight;
+                    this.ctx.moveTo(xx, yy);
+                    
+                    let x2 = xx + this.grid.cellWidth * Math.cos(this.degToRad(angleArray[i]));
+                    let y2 = yy - this.grid.cellHeight * Math.sin(this.degToRad(angleArray[i]));
+                    this.ctx.lineTo(x2, y2);
+                    this.ctx.stroke();
+                }
             }
         }
     }
@@ -217,19 +223,29 @@ export default class GridArrayController {
     }
     
     getJSON():string {
-        const output = {
-            widthArrayLength: this.grid.cellCountX,
-            heightArrayLength: this.grid.cellCountY,
-            widthArray: this.widthArray,
-            heightArray: this.heightArray
-        };
-        if (this.useAngleArray){
-            output["angleArray"] = this.angleArray;
-            output["angleArrayLength"] = this.grid.cellCountX;
-        }
-        else{
-            output["angleArray"] = this.angle;
-            output["angleArrayLength"] = 1;
+        const output = [];
+        for (let i = 0; i < this.tileSet.tiles.length; i ++){
+            if (this.tileSet.tiles[i].hasCollisionData){
+                const tileData: {
+                    tileIndex?: number;
+                    useAngleArray?: boolean;
+                    widthArray?: number[];
+                    heightArray?: number[];
+                    angleArray?: number[];
+                    angleValueSingle?: number;
+                } = {};
+                
+                tileData.tileIndex = i;
+                tileData.widthArray = this.tileSet.tiles[i].widthArray;
+                tileData.heightArray = this.tileSet.tiles[i].heightArray;
+                tileData.angleArray = this.tileSet.tiles[i].useAngleArray ? this.tileSet.tiles[i].angleArray : [];
+                tileData.useAngleArray = this.tileSet.tiles[i].useAngleArray;
+                if (!tileData.useAngleArray){
+                    tileData.angleValueSingle = this.tileSet.tiles[i].angleValueSingle;
+                }
+
+                output.push(tileData);
+            }
         }
 
         return JSON.stringify(output, null, "\t");
