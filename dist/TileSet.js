@@ -48,6 +48,9 @@ export default class TileSet {
                 tileData.widthArray = this.tiles[i].widthArray;
                 tileData.heightArray = this.tiles[i].heightArray;
                 tileData.angleArray = this.tiles[i].useAngleArray ? this.tiles[i].angleArray : [];
+                tileData.angleInitial = this.tiles[i].angleInitial;
+                tileData.angleLast = this.tiles[i].angleLast;
+                tileData.angleSmoothFactor = this.tiles[i].angleSmoothFactor;
                 tileData.useAngleArray = this.tiles[i].useAngleArray;
                 if (!tileData.useAngleArray) {
                     tileData.angleValueSingle = this.tiles[i].angleValueSingle;
@@ -70,6 +73,9 @@ export default class TileSet {
                 existingTile.angleArray = inputTile.useAngleArray ? inputTile.angleArray : new Array(this.grid.cellCountX).fill(0);
                 existingTile.useAngleArray = inputTile.useAngleArray;
                 existingTile.angleValueSingle = inputTile.angleValueSingle;
+                existingTile.angleInitial = inputTile.angleInitial;
+                existingTile.angleLast = inputTile.angleLast;
+                existingTile.angleSmoothFactor = inputTile.angleSmoothFactor;
                 existingTile.hasCollisionData = true;
             }
         }

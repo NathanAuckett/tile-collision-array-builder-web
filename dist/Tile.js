@@ -8,6 +8,9 @@ export default class Tile {
     heightArray;
     angleArray;
     angleValueSingle = 0;
+    angleInitial = 0;
+    angleLast = 90;
+    angleSmoothFactor = 0.5;
     useAngleArray = true;
     hasCollisionData = false;
     constructor(image, x, y, width, height, grid) {

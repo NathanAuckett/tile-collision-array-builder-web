@@ -64,7 +64,13 @@ function main() {
             gridArrayController.drawAll();
             gridArrayController.updateOutput(tileSet.JsonExport());
             inputSingleAngleValue.checked = !tileSet.tiles[value].useAngleArray;
+            inputInitialAngle.value = tileSet.tiles[value].angleInitial.toString();
+            inputLastAngle.value = tileSet.tiles[value].angleLast.toString();
+            inputSmoothFactor.value = tileSet.tiles[value].angleSmoothFactor.toString();
             inputSingleAngleValue.dispatchEvent(new Event("change"));
+            inputInitialAngle.dispatchEvent(new Event("change"));
+            inputLastAngle.dispatchEvent(new Event("change"));
+            inputSmoothFactor.dispatchEvent(new Event("change"));
         }
     });
     //Handle grid Cell count changes - not working yet
@@ -94,10 +100,12 @@ function main() {
             value = 0;
             target.value = value.toString();
         }
-        gridArrayController.initialAngle = value;
+        tileSet.tiles[gridArrayController.tileIndex].angleInitial = value;
+        //gridArrayController.initialAngle = value;
         gridArrayController.calcArrayAngles();
         gridArrayController.smoothAngleArray();
         gridArrayController.drawAll();
+        gridArrayController.updateOutput(tileSet.JsonExport());
     });
     inputLastAngle.addEventListener("change", (e) => {
         const target = e.target;
@@ -110,10 +118,12 @@ function main() {
             value = 0;
             target.value = value.toString();
         }
-        gridArrayController.lastAngle = value;
+        tileSet.tiles[gridArrayController.tileIndex].angleLast = value;
+        //gridArrayController.lastAngle = value;
         gridArrayController.calcArrayAngles();
         gridArrayController.smoothAngleArray();
         gridArrayController.drawAll();
+        gridArrayController.updateOutput(tileSet.JsonExport());
     });
     inputSmoothFactor.addEventListener("change", (e) => {
         const target = e.target;
@@ -126,10 +136,12 @@ function main() {
             value = 0;
             target.value = value.toString();
         }
-        gridArrayController.angleSmoothFactor = value;
+        tileSet.tiles[gridArrayController.tileIndex].angleSmoothFactor = value;
+        //gridArrayController.angleSmoothFactor = value;
         gridArrayController.calcArrayAngles();
         gridArrayController.smoothAngleArray();
         gridArrayController.drawAll();
+        gridArrayController.updateOutput(tileSet.JsonExport());
     });
     inputAngle.addEventListener("change", (e) => {
         const target = e.target;

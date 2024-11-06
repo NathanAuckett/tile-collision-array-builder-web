@@ -10,6 +10,9 @@ export default class Tile {
     heightArray: number[];
     angleArray: number[];
     angleValueSingle: number = 0;
+    angleInitial: number = 0;
+    angleLast: number = 90;
+    angleSmoothFactor: number = 0.5;
     useAngleArray = true;
     hasCollisionData: boolean = false;
     

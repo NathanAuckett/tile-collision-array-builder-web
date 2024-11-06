@@ -114,8 +114,8 @@ export default class GridArrayController {
             angleArray[i] = a;
         }
 
-        angleArray[0] = this.initialAngle;
-        angleArray[angleArray.length - 1] = this.lastAngle;
+        angleArray[0] = this.tileSet.tiles[this.tileIndex].angleInitial;
+        angleArray[angleArray.length - 1] = this.tileSet.tiles[this.tileIndex].angleLast;
     }
 
     calcAngle(x1, y1, x2, y2, returnDegrees = true){
@@ -130,13 +130,13 @@ export default class GridArrayController {
     }
 
     smoothAngleArray(){
-        if (this.angleSmoothFactor > 0){
+        if (this.tileSet.tiles[this.tileIndex].angleSmoothFactor > 0){
             let angleArray = this.tileSet.tiles[this.tileIndex].angleArray;
             for (let i = this.grid.cellCountX - 2; i > 1; i --){
                 let prevAngle = angleArray[i + 1];
                 let thisAngle = angleArray[i];
                 
-                thisAngle += this.angleSmoothFactor * (prevAngle - thisAngle);
+                thisAngle += this.tileSet.tiles[this.tileIndex].angleSmoothFactor * (prevAngle - thisAngle);
                 
                 angleArray[i] = parseFloat(thisAngle.toFixed(this.anglePrecision));
             }
