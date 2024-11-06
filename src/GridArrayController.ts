@@ -35,7 +35,7 @@ export default class GridArrayController {
 
         this.canvas.addEventListener("mouseup", (e) => { //we don't want to update the output unless we stop drawing, window would make releasing mouse anywhere update it
             if (e.button == 0){
-                this.updateOutput(this.getJSON());
+                this.updateOutput(this.tileSet.JsonExport());
             }
         });
         
@@ -222,34 +222,34 @@ export default class GridArrayController {
         return angle * (180 / Math.PI);
     }
     
-    getJSON():string {
-        const output = [];
-        for (let i = 0; i < this.tileSet.tiles.length; i ++){
-            if (this.tileSet.tiles[i].hasCollisionData){
-                const tileData: {
-                    tileIndex?: number;
-                    useAngleArray?: boolean;
-                    widthArray?: number[];
-                    heightArray?: number[];
-                    angleArray?: number[];
-                    angleValueSingle?: number;
-                } = {};
+    // getJSON():string {
+    //     const output = [];
+    //     for (let i = 0; i < this.tileSet.tiles.length; i ++){
+    //         if (this.tileSet.tiles[i].hasCollisionData){
+    //             const tileData: {
+    //                 tileIndex?: number;
+    //                 useAngleArray?: boolean;
+    //                 widthArray?: number[];
+    //                 heightArray?: number[];
+    //                 angleArray?: number[];
+    //                 angleValueSingle?: number;
+    //             } = {};
                 
-                tileData.tileIndex = i;
-                tileData.widthArray = this.tileSet.tiles[i].widthArray;
-                tileData.heightArray = this.tileSet.tiles[i].heightArray;
-                tileData.angleArray = this.tileSet.tiles[i].useAngleArray ? this.tileSet.tiles[i].angleArray : [];
-                tileData.useAngleArray = this.tileSet.tiles[i].useAngleArray;
-                if (!tileData.useAngleArray){
-                    tileData.angleValueSingle = this.tileSet.tiles[i].angleValueSingle;
-                }
+    //             tileData.tileIndex = i;
+    //             tileData.widthArray = this.tileSet.tiles[i].widthArray;
+    //             tileData.heightArray = this.tileSet.tiles[i].heightArray;
+    //             tileData.angleArray = this.tileSet.tiles[i].useAngleArray ? this.tileSet.tiles[i].angleArray : [];
+    //             tileData.useAngleArray = this.tileSet.tiles[i].useAngleArray;
+    //             if (!tileData.useAngleArray){
+    //                 tileData.angleValueSingle = this.tileSet.tiles[i].angleValueSingle;
+    //             }
 
-                output.push(tileData);
-            }
-        }
+    //             output.push(tileData);
+    //         }
+    //     }
 
-        return JSON.stringify(output, null, "\t");
-    }
+    //     return JSON.stringify(output, null, "\t");
+    // }
 
     updateOutput(str: string){
         this.outputElement.value = str;

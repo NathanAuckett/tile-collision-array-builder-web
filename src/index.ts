@@ -71,8 +71,7 @@ function main(){
             }
             gridArrayController.tileIndex = value;
             gridArrayController.drawAll();
-            gridArrayController.updateOutput(gridArrayController.getJSON());
-            console.log("checked", tileSet.tiles[value].useAngleArray);
+            gridArrayController.updateOutput(tileSet.JsonExport());
             inputSingleAngleValue.checked = !tileSet.tiles[value].useAngleArray;
             inputSingleAngleValue.dispatchEvent(new Event("change"));
         }
@@ -158,29 +157,34 @@ function main(){
             target.value = value.toString();
         }
         tileSet.tiles[gridArrayController.tileIndex].angleValueSingle = value;
-        gridArrayController.updateOutput(gridArrayController.getJSON());
+        gridArrayController.updateOutput(tileSet.JsonExport());
         gridArrayController.drawAll();
     });
 
     inputSingleAngleValue.addEventListener("change", (e) => {
         const target = e.target as HTMLInputElement;
-        console.log(target.checked);
         const arrayInputDiv = document.getElementById("arrayAngleSettings") as HTMLElement;
         const angleInputDiv = document.getElementById("angleInput") as HTMLElement;
         if (target.checked){
             angleInputDiv.style.display = "initial";
             arrayInputDiv.style.display = "none";
             tileSet.tiles[gridArrayController.tileIndex].useAngleArray = false;
-            gridArrayController.updateOutput(gridArrayController.getJSON());
+            gridArrayController.updateOutput(tileSet.JsonExport());
         }
         else{
             angleInputDiv.style.display = "none";
             arrayInputDiv.style.display = "initial";
             tileSet.tiles[gridArrayController.tileIndex].useAngleArray = true;
-            gridArrayController.updateOutput(gridArrayController.getJSON());
+            gridArrayController.updateOutput(tileSet.JsonExport());
         }
         gridArrayController.drawAll();
-        gridArrayController.updateOutput(gridArrayController.getJSON());
+        gridArrayController.updateOutput(tileSet.JsonExport());
+    });
+
+    output.addEventListener("change", (e) => {
+        const target = e.target as HTMLInputElement;
+        tileSet.JsonIngest(target.value);
+        gridArrayController.drawAll();
     });
 }
 

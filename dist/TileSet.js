@@ -7,12 +7,14 @@ export default class TileSet {
     tileCount;
     tileCountX;
     tileCountY;
+    grid;
     constructor(image, tileWidth, tileHeight, grid) {
         this.image = image;
         this.tileWidth = tileWidth;
         this.tileHeight = tileHeight;
         this.tileCountX = Math.floor(this.image.width / this.tileWidth);
         this.tileCountY = Math.floor(this.image.height / this.tileHeight);
+        this.grid = grid;
         this.generateTiles(grid);
     }
     generateTiles(grid) {
@@ -36,5 +38,40 @@ export default class TileSet {
         ctx.fillStyle = "white";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(this.image, x, y, width, height);
+    }
+    JsonExport() {
+        const output = [];
+        for (let i = 0; i < this.tiles.length; i++) {
+            if (this.tiles[i].hasCollisionData) {
+                const tileData = {};
+                tileData.tileIndex = i;
+                tileData.widthArray = this.tiles[i].widthArray;
+                tileData.heightArray = this.tiles[i].heightArray;
+                tileData.angleArray = this.tiles[i].useAngleArray ? this.tiles[i].angleArray : [];
+                tileData.useAngleArray = this.tiles[i].useAngleArray;
+                if (!tileData.useAngleArray) {
+                    tileData.angleValueSingle = this.tiles[i].angleValueSingle;
+                }
+                output.push(tileData);
+            }
+        }
+        return JSON.stringify(output, null, "\t");
+    }
+    JsonIngest(json) {
+        if (json) {
+            console.log("yes");
+            let data = JSON.parse(json);
+            for (let i = 0; i < data.length; i++) {
+                const inputTile = data[i];
+                const index = inputTile.tileIndex;
+                const existingTile = this.tiles[index];
+                existingTile.widthArray = inputTile.widthArray;
+                existingTile.heightArray = inputTile.heightArray;
+                existingTile.angleArray = inputTile.useAngleArray ? inputTile.angleArray : new Array(this.grid.cellCountX).fill(0);
+                existingTile.useAngleArray = inputTile.useAngleArray;
+                existingTile.angleValueSingle = inputTile.angleValueSingle;
+                existingTile.hasCollisionData = true;
+            }
+        }
     }
 }
