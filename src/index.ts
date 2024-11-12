@@ -72,14 +72,18 @@ function main(){
             gridArrayController.tileIndex = value;
             gridArrayController.drawAll();
             gridArrayController.updateOutput(tileSet.JsonExport());
-            inputSingleAngleValue.checked = !tileSet.tiles[value].useAngleArray;
-            inputInitialAngle.value = tileSet.tiles[value].angleInitial.toString();
-            inputLastAngle.value = tileSet.tiles[value].angleLast.toString();
-            inputSmoothFactor.value = tileSet.tiles[value].angleSmoothFactor.toString();
-            inputSingleAngleValue.dispatchEvent(new Event("change"));
-            inputInitialAngle.dispatchEvent(new Event("change"));
-            inputLastAngle.dispatchEvent(new Event("change"));
-            inputSmoothFactor.dispatchEvent(new Event("change"));
+            // inputSingleAngleValue.checked = !tileSet.tiles[value].useAngleArray;
+            // inputAngle.value = tileSet.tiles[value].angleValueSingle.toString();
+            // inputInitialAngle.value = tileSet.tiles[value].angleInitial.toString();
+            // inputLastAngle.value = tileSet.tiles[value].angleLast.toString();
+            // inputSmoothFactor.value = tileSet.tiles[value].angleSmoothFactor.toString();
+            // inputAngle.dispatchEvent(new Event("change"));
+            // inputSingleAngleValue.dispatchEvent(new Event("change"));
+            // inputInitialAngle.dispatchEvent(new Event("change"));
+            // inputLastAngle.dispatchEvent(new Event("change"));
+            // inputSmoothFactor.dispatchEvent(new Event("change"));
+
+            updateInputFieldsToTileIndexData(value);
         }
     });
 
@@ -197,7 +201,21 @@ function main(){
         const target = e.target as HTMLInputElement;
         tileSet.JsonIngest(target.value);
         gridArrayController.drawAll();
+        updateInputFieldsToTileIndexData(gridArrayController.tileIndex);
     });
+
+    function updateInputFieldsToTileIndexData(_tileIndex: number){
+        inputSingleAngleValue.checked = !tileSet.tiles[_tileIndex].useAngleArray;
+        inputAngle.value = tileSet.tiles[_tileIndex].angleValueSingle.toString();
+        inputInitialAngle.value = tileSet.tiles[_tileIndex].angleInitial.toString();
+        inputLastAngle.value = tileSet.tiles[_tileIndex].angleLast.toString();
+        inputSmoothFactor.value = tileSet.tiles[_tileIndex].angleSmoothFactor.toString();
+        inputAngle.dispatchEvent(new Event("change"));
+        inputSingleAngleValue.dispatchEvent(new Event("change"));
+        inputInitialAngle.dispatchEvent(new Event("change"));
+        inputLastAngle.dispatchEvent(new Event("change"));
+        inputSmoothFactor.dispatchEvent(new Event("change"));
+    }
 }
 
 window.addEventListener("load", function(){
